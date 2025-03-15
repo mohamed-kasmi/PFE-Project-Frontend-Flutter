@@ -3,6 +3,7 @@ import '../../widget/TextFieldWidget.dart';
 import '../../widget/RoleSelectionWidget.dart';
 import '../../widget/ButtonWidget.dart';
 import '../../widget/side_bar.dart';
+import '../../api/apiuser.dart';
 class AjoutPage extends StatefulWidget {
   @override
   _AjoutPageState createState() => _AjoutPageState();
@@ -11,14 +12,38 @@ class AjoutPage extends StatefulWidget {
 class _AjoutPageState extends State<AjoutPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController matriculeController = TextEditingController();
-  String _selectedRole = "";  // Default role
+  String _selectedRole = "";
+  String _Role = "";
 
-  void handleSubmit() {
+  void handleSubmit() async{
     String email = emailController.text;
-    String matricule = matriculeController.text;
+    int matricule = int.parse(matriculeController.text);
+    if (_selectedRole == '') {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please select a role.")),
+      );
+      return;
+    }else{
+      try{
+        bool result = await Apiuser.adduser(matricule, email, _Role);
+        if(result == true){
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("User has been added. Please check the mail box.")),
+          );
+        }else{
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("User already exist !")),
+          );
+        }
+      }catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Add user failed: $e")),
+        );
+      }
+    }
 
-    // Handle form submission
-    print("Email: $email, Matricule: $matricule, Role: $_selectedRole");
+
+    print("Email: $email, Matricule: $matricule, Role: $_Role");
   }
 
   @override
@@ -67,6 +92,7 @@ class _AjoutPageState extends State<AjoutPage> {
                 onChanged: (value) {
                   setState(() {
                     _selectedRole = value!;
+                    _Role = "planification";
                   });
                 },
               ),
@@ -77,6 +103,7 @@ class _AjoutPageState extends State<AjoutPage> {
                 onChanged: (value) {
                   setState(() {
                     _selectedRole = value!;
+                    _Role = "production";
                   });
                 },
               ),

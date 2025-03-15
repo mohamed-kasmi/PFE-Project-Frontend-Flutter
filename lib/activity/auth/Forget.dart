@@ -3,6 +3,7 @@ import '../../widget/TextFieldWidget.dart';
 import '../../widget/ButtonWidget.dart';
 import '../Home.dart';
 import '../../widget/side_bar.dart';
+import '../../api/apiuser.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   @override
@@ -13,11 +14,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
+  void _submitForm() async {
+    String email = emailController.text;
+    try {
+      await Apiuser.forgotpass(email);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Password reset link sent to your email')),
       );
+    }catch(e){
+      print("$e");
     }
   }
 
