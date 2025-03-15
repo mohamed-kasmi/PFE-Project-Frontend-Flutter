@@ -27,13 +27,19 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         return;
       }
       try {
-        await Apiuser.restpass(widget.token!, widget.email!, _newPasswordController.text);
+        bool response= await Apiuser.restpass(widget.token!, widget.email!, _newPasswordController.text);
+        if(response==true){
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Password has been reset successfully')),
+          SnackBar(content: Text('Password has been reset successfully.')),
         );
 
         // Navigate to the login page after success
         Navigator.pushReplacementNamed(context, '/login');
+        }else{
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Link has been expired.')),
+          );
+        }
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Error resetting password. Please try again.")),

@@ -36,7 +36,7 @@ class Apiuser {
       return false;
     }
   }
-  static Future<void> forgotpass(String email) async{
+  static Future<bool> forgotpass(String email) async{
     try{
       final response = await http.post(Uri.parse('$baseurl/forgot_password/'),
         headers: {"Content-Type": "application/json"},
@@ -44,14 +44,17 @@ class Apiuser {
       );
       if (response.statusCode == 200) {
         print("mail sent ");
+        return true;
       } else {
         print("not sent " );
+        return false;
       }
     }catch(e){
       print("Error: $e");
+      return false;
     }
   }
-  static Future<void> restpass(String token,String email,String password) async {
+  static Future<bool> restpass(String token,String email,String password) async {
     try{
       final response =await http.put(Uri.parse('$baseurl/reset_password/'),
           headers: {"Content-Type": "application/json"},
@@ -59,11 +62,14 @@ class Apiuser {
       );
       if (response.statusCode == 200) {
         print("password reset sucssefuly ");
+        return true;
       } else {
         print("password didn't reset " );
+        return false;
       }
     }catch(e){
       print("Error: $e");
+      return false;
     }
   }
   static Future<bool> setpass(String token,String email,String password) async{

@@ -17,10 +17,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   void _submitForm() async {
     String email = emailController.text;
     try {
-      await Apiuser.forgotpass(email);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Password reset link sent to your email')),
-      );
+      bool response = await Apiuser.forgotpass(email);
+      if(response==true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Password reset link sent to your email.')),
+        );
+      }else{
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Email do not exist.')),
+        );
+      }
     }catch(e){
       print("$e");
     }
