@@ -7,7 +7,7 @@ import 'activity/s_administrateur/ajout.dart';
 
 void main() {
   runApp(MaterialApp(
-    home: HomePage(),
+    home: AjoutPage(),
     debugShowCheckedModeBanner: false,
   ));
 }
