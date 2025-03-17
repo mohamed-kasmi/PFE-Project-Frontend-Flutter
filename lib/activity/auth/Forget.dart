@@ -3,6 +3,7 @@ import '../../widget/TextFieldWidget.dart';
 import '../../widget/ButtonWidget.dart';
 import '../Home.dart';
 import '../../widget/side_bar.dart';
+import '../../api/apiuser.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   @override
@@ -13,11 +14,21 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Password reset link sent to your email')),
-      );
+  void _submitForm() async {
+    String email = emailController.text;
+    try {
+      bool response = await Apiuser.forgotpass(email);
+      if(response==true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Password reset link sent to your email.')),
+        );
+      }else{
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Email do not exist.')),
+        );
+      }
+    }catch(e){
+      print("$e");
     }
   }
 
@@ -27,7 +38,18 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       backgroundColor: Colors.blue[900],
       drawer: SideBar(),
       appBar: AppBar(
-        backgroundColor: Colors.blue[700],
+        backgroundColor: Colors.blue[900],
+        elevation: 0,
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: Icon(Icons.menu, color: Colors.white),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
+        ),
       ),
       body: Center(
         child: Padding(

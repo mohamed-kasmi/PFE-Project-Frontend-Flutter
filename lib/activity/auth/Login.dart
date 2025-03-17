@@ -3,18 +3,46 @@ import '../../widget/Login_Elements/TextFieldWidget.dart';
 import '../../widget/Login_Elements/LoginButtonWidget.dart';
 import '../../widget/side_bar.dart';
 import '../auth/Forget.dart';
+import '../../api/apiuser.dart';
+import '../Home.dart';
+
 class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
 }
+
 class _LoginState extends State<Login> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  void handleLogin() {
+  void handleLogin() async {
     String email = emailController.text;
     String password = passwordController.text;
-    print("Email: $email, Password: $password");
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please enter email and password")),
+      );
+      return;
+    }
+
+    try {
+      bool result = await Apiuser.auth(email, password);
+      if(result == true) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        ); // Navigate after login
+      }else{
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Login failed")),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Login failed: $e")),
+      );
+    }
   }
 
   @override
@@ -25,7 +53,6 @@ class _LoginState extends State<Login> {
       appBar: AppBar(
         backgroundColor: Colors.blue[900],
         elevation: 0,
-
         leading: Builder(
           builder: (context) {
             return IconButton(
@@ -71,7 +98,7 @@ class _LoginState extends State<Login> {
               SizedBox(height: 40),
               LoginButtonWidget(
                 text: "Login",
-                onPressed: handleLogin,
+                onPressed: handleLogin, // Call handleLogin on button press
               ),
               SizedBox(height: 15),
               TextButton(
