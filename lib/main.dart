@@ -36,7 +36,6 @@ void main() {
           builder: (context) => SetPasswordPage(token: token, email: email),
         );
       }
-      // Default Routes
       switch (settings.name) {
         case '/':
           return MaterialPageRoute(builder: (context) => HomePage());
