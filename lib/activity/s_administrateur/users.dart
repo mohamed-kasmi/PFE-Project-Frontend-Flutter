@@ -19,13 +19,11 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   Future<void> _loadUsers() async {
+    List<User> fetchedUsers = await Apiuser.getusers();
     setState(() {
-      users = [
-        User(id: 1, email: "user1@example.com", matricule: 12345, role: "Admin planification"),
-        User(id: 2, email: "user2@example.com", matricule: 67890, role: "Admin production"),
-        User(id: 3, email: "user3@example.com", matricule: 54321, role: "Manager"),
-      ];
+      users = fetchedUsers;
     });
+
   }
 
   void _showDeleteConfirmationDialog(User user) {
@@ -52,9 +50,17 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   Future<void> _deleteUser(int id) async {
-    setState(() {
-      users.removeWhere((user) => user.id == id);
-    });
+    bool response = await Apiuser.deleteuser(id);
+
+    if (response) {
+      setState(() {
+        users.removeWhere((user) => user.id == id);
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Échec de la suppression de l\'utilisateur.')),
+      );
+    }
   }
 
   @override

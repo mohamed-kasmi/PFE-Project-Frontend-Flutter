@@ -108,6 +108,28 @@ class Apiuser {
       return false;
     }
   }
+  static Future<Map<String, dynamic>?> fetchTokenAndEmail(String verificationId) async {
+    try {
+      final response = await http.get(
+        Uri.parse('$baseurl/verification/?vid=$verificationId'),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return {
+          'email': data['email'],
+          'token': data['token'],
+        };
+      } else {
+        print('Error: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      return null;
+    }
+  }
+
   static Future<List<User>> getusers() async {
     try {
       final response = await http.get(Uri.parse('$baseurl/getall/'));

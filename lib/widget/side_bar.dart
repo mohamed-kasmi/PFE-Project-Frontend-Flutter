@@ -11,6 +11,7 @@ class SideBar extends StatefulWidget {
 
 class _SideBarState extends State<SideBar> {
   String _role = '';
+  String _email ='Log in!';
 
   @override
   void initState() {
@@ -18,22 +19,35 @@ class _SideBarState extends State<SideBar> {
     _loadRole();
   }
 
+  Future<void> _setRole() async {
+    final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('role','aaaaa'); // Ensure state updates properly
+
+  }
   Future<void> _loadRole() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _role = prefs.getString('role') ?? ''; // Ensure state updates properly
+      _role = prefs.getString('role') ?? '';
+      _email = prefs.getString('email') ?? 'Log in!';
     });
-  }
-  Future<void> _setRole() async {
-    final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('role','admin'); // Ensure state updates properly
 
+    print("Loaded Role: $_role");
+    print("Loaded Email: $_email");
   }
+
   Future<void> _defaultRole() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('role',''); // Ensure state updates properly
+    await prefs.clear();
 
+    await prefs.setString('role', '');
+    await prefs.setString('email', 'Log in!');
+
+    await _loadRole();
+
+    print("Reset Role: $_role"); // This now prints the correct value
+    print("Reset Email: $_email");
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +66,7 @@ class _SideBarState extends State<SideBar> {
                   "Welcome!",
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
-                Text(
-                  "user@example.com",
+                Text(_email,
                   style: TextStyle(color: Colors.white70, fontSize: 14),
                 ),
               ],
@@ -102,8 +115,8 @@ class _SideBarState extends State<SideBar> {
       ListTile(
         leading: Icon(Icons.logout),
         title: Text('Logout'),
-        onTap: () {
-          _defaultRole(); // Call the function first
+        onTap: () async {
+          await _defaultRole(); // Call the function first
           Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage())); // Then navigate
         },
       ),

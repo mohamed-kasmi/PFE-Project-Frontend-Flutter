@@ -13,20 +13,26 @@ class _AjoutPageState extends State<AjoutPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController matriculeController = TextEditingController();
 
-  // Liste des rôles disponibles
-  final Map<String, bool> roles = {
-    "Responsable Planification": false,
-    "Responsable Production": false,
+  // Internal role mapping
+  final Map<String, String> roles = {
+    "Responseble Planification": "planification",
+    "Responseble Production": "production",
+  };
+
+  // Separate checkbox state map
+  final Map<String, bool> roleChecks = {
+    "Responseble Planification": false,
+    "Responseble Production": false,
   };
 
   void handleSubmit() async {
     String email = emailController.text;
     int matricule = int.tryParse(matriculeController.text) ?? 0;
 
-    // Récupérer les rôles sélectionnés
-    List<String> selectedRoles = roles.entries
-        .where((entry) => entry.value) // Filtrer ceux qui sont cochés
-        .map((entry) => entry.key) // Extraire le nom du rôle
+    // Get selected internal role values
+    List<String> selectedRoles = roleChecks.entries
+        .where((entry) => entry.value)
+        .map((entry) => roles[entry.key]!)
         .toList();
 
     if (selectedRoles.isEmpty) {
@@ -75,7 +81,6 @@ class _AjoutPageState extends State<AjoutPage> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Image de fond
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
@@ -84,15 +89,14 @@ class _AjoutPageState extends State<AjoutPage> {
               ),
             ),
           ),
-          // Contenu semi-transparent
           Center(
             child: Container(
               width: 500,
               height: 600,
               padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.8), // Cadre avec opacité
-                borderRadius: BorderRadius.circular(10), // Coins arrondis
+                color: Colors.white.withOpacity(0.8),
+                borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black26,
@@ -103,18 +107,14 @@ class _AjoutPageState extends State<AjoutPage> {
               ),
               child: Column(
                 children: [
-                  // Email TextField
                   TextFieldWidget(
                     labelText: "Email",
                     controller: emailController,
                     icon: Icons.email,
-                    iconColor: Colors.blue[900]!,  // Ensure the color is non-null
-                    textColor: Colors.blue[900]!,  // Ensure the color is non-null
+                    iconColor: Colors.blue[900]!,
+                    textColor: Colors.blue[900]!,
                   ),
-
-
                   SizedBox(height: 20),
-                  // Matricule TextField
                   TextFieldWidget(
                     labelText: "Matricule",
                     controller: matriculeController,
@@ -123,24 +123,21 @@ class _AjoutPageState extends State<AjoutPage> {
                     textColor: Colors.blue[900]!,
                   ),
                   SizedBox(height: 20),
-                  // Liste des Checkboxes avec le texte après
                   Column(
-                    children: roles.keys.map((role) {
+                    children: roleChecks.keys.map((role) {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          // Checkbox avant le texte
                           Checkbox(
-                            value: roles[role],
+                            value: roleChecks[role],
                             onChanged: (bool? value) {
                               setState(() {
-                                roles[role] = value ?? false;
+                                roleChecks[role] = value ?? false;
                               });
                             },
                             activeColor: Colors.blue[900],
                             checkColor: Colors.white,
                           ),
-                          // Texte du rôle
                           Text(
                             role,
                             style: TextStyle(color: Colors.blue[900]),
@@ -150,12 +147,10 @@ class _AjoutPageState extends State<AjoutPage> {
                     }).toList(),
                   ),
                   SizedBox(height: 30),
-                  // Ajouter un Spacer pour pousser le bouton vers le bas
                   Spacer(),
-                  // Bouton Ajouter Responsable avec taille réduite
                   Container(
-                    width: double.infinity, // Largeur complète
-                    height: 45, // Réduire la hauteur du bouton
+                    width: double.infinity,
+                    height: 45,
                     child: ElevatedButton(
                       onPressed: handleSubmit,
                       style: ElevatedButton.styleFrom(
@@ -166,7 +161,7 @@ class _AjoutPageState extends State<AjoutPage> {
                       ),
                       child: Text(
                         "Ajouter Responsable",
-                        style: TextStyle(fontSize: 14,color: Colors.white), // Taille du texte plus petite
+                        style: TextStyle(fontSize: 14, color: Colors.white),
                       ),
                     ),
                   ),

@@ -4,10 +4,9 @@ import '../../widget/ButtonWidget.dart';
 import '../../api/apiuser.dart';
 
 class SetPasswordPage extends StatefulWidget {
-  final String? token;
-  final String? email;
+  final String verificationId;
 
-  SetPasswordPage({this.token, this.email});
+  SetPasswordPage({required this.verificationId});
 
   @override
   _SetPasswordPageState createState() => _SetPasswordPageState();
@@ -18,31 +17,48 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
 
+  String? email;
+  String? token;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVerificationData();
+  }
+
+  Future<void> _loadVerificationData() async {
+    final result = await Apiuser.fetchTokenAndEmail(widget.verificationId);
+    if (result != null) {
+      setState(() {
+        email = result['email'];
+        token = result['token'];
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Invalid or expired verification link.")),
+      );
+    }
+  }
+
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      if (widget.token == null || widget.email == null) {
+      if (token == null || email == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Invalid set password link.")),
+          SnackBar(content: Text("Verification info missing.")),
         );
         return;
       }
-      try {
-        bool result = await Apiuser.setpass(widget.token!, widget.email!, _newPasswordController.text);
-        if (result) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Password has been set successfully.')),
-          );
-          Navigator.pushReplacementNamed(context, '/login');
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error setting password. Please try again.')),
-          );
-        }
-      } catch (error) {
+
+      bool result = await Apiuser.setpass(token!, email!, _newPasswordController.text);
+      if (result) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error setting password. Please try again.")),
+          SnackBar(content: Text('Password has been set successfully.')),
         );
-        print("Error: $error");
+        Navigator.pushReplacementNamed(context, '/login');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error setting password. Please try again.')),
+        );
       }
     }
   }
@@ -80,55 +96,58 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
                 ],
               ),
               child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Image.asset(
-                          'assets/bulgin.png', // Custom logo
-                          height: 110, // Logo height
-                          width: 150,  // Logo width
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      "Set Password for ${widget.email ?? 'Unknown'}",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.blue[900],
-                        fontWeight: FontWeight.bold,
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Image.asset(
+                            'assets/bulgin.png', // Custom logo
+                            height: 110, // Logo height
+                            width: 150,  // Logo width
+                          ),
+                        ],
                       ),
-                    ),
-                    SizedBox(height: 40),
-                    // New Password TextField
-                    TextFieldWidget(
-                      labelText: "Password",
-                      controller: _newPasswordController,
-                      icon: Icons.lock,
-                      obscureText: true,
-                      iconColor: Colors.blue[900]!,
-                      textColor: Colors.blue[900]!,
-                    ),
-                    SizedBox(height: 20),
-                    // Confirm Password TextField
-                    TextFieldWidget(
-                      labelText: "Confirm Password",
-                      controller: _confirmPasswordController,
-                      icon: Icons.lock_outline,
-                      obscureText: true,
-                      iconColor: Colors.blue[900]!,
-                      textColor: Colors.blue[900]!,
-                    ),
-                    SizedBox(height: 40),
-                    // Set Password Button
-                    ButtonWidget(
-                      text: "Set Password",
-                      onPressed: _submitForm,
-                    ),
-                  ],
+                      SizedBox(height: 20),
+                      Text(
+                        "Set Password for ${email ?? 'Unknown'}",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.blue[900],
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 40),
+                      // New Password TextField
+                      TextFieldWidget(
+                        labelText: "Password",
+                        controller: _newPasswordController,
+                        icon: Icons.lock,
+                        obscureText: true,
+                        iconColor: Colors.blue[900]!,
+                        textColor: Colors.blue[900]!,
+                      ),
+                      SizedBox(height: 20),
+                      // Confirm Password TextField
+                      TextFieldWidget(
+                        labelText: "Confirm Password",
+                        controller: _confirmPasswordController,
+                        icon: Icons.lock_outline,
+                        obscureText: true,
+                        iconColor: Colors.blue[900]!,
+                        textColor: Colors.blue[900]!,
+                      ),
+                      SizedBox(height: 40),
+                      // Set Password Button
+                      ButtonWidget(
+                        text: "Set Password",
+                        onPressed: _submitForm,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

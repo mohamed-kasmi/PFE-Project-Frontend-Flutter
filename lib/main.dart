@@ -19,22 +19,34 @@ void main() {
       Uri uri = Uri.parse(settings.name!); // Parse the URL
 
       if (uri.path == '/reset-password') {
-        // Extract token and email from query parameters
-        String? token = uri.queryParameters['token'];
-        String? email = uri.queryParameters['email'];
+        String? verificationId = uri.queryParameters['vid'];
 
-        return MaterialPageRoute(
-          builder: (context) => ResetPasswordPage(token: token, email: email),
-        );
+        if (verificationId != null) {
+          return MaterialPageRoute(
+            builder: (context) => ResetPasswordPage(verificationId: verificationId),
+          );
+        } else {
+          return MaterialPageRoute(
+            builder: (context) => Scaffold(
+              body: Center(child: Text('Invalid link.')),
+            ),
+          );
+        }
       }
       if (uri.path == '/set-password') {
-        // Extract token and email from query parameters
-        String? token = uri.queryParameters['token'];
-        String? email = uri.queryParameters['email'];
+        String? verificationId = uri.queryParameters['vid'];
 
-        return MaterialPageRoute(
-          builder: (context) => SetPasswordPage(token: token, email: email),
-        );
+        if (verificationId != null) {
+          return MaterialPageRoute(
+            builder: (context) => SetPasswordPage(verificationId: verificationId),
+          );
+        } else {
+          return MaterialPageRoute(
+            builder: (context) => Scaffold(
+              body: Center(child: Text('Invalid link.')),
+            ),
+          );
+        }
       }
       switch (settings.name) {
         case '/':
