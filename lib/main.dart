@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:pdcs_frontend/activity/Home.dart';
+import 'package:pdcs_frontend/activity/home.dart';
 import 'activity/auth/Login.dart';
 import 'activity/auth/Forget.dart';
 import 'activity/auth/reset.dart';
 import 'activity/auth/setpassword.dart';
 import 'activity/s_administrateur/users.dart';
 import 'activity/s_administrateur/ajout.dart';
+import 'activity/screen/dashboard.dart';
+import 'activity/rs_production/production.dart';
+import 'activity/rs_planification/planification.dart';
+
 
 void main() {
   runApp(MaterialApp(
@@ -53,7 +57,7 @@ void main() {
         case '/users':
           return MaterialPageRoute(builder: (context) => UsersPage());
         default:
-          return MaterialPageRoute(builder: (context) => HomePage()); // Fallback
+          return MaterialPageRoute(builder: (context) => HomePage());
       }
     },
   ));

@@ -3,6 +3,7 @@ import '../../api/apiuser.dart';
 import '../../models/user.dart';
 import 'ajout.dart';
 import '../../widget/side_bar.dart';
+
 class UsersPage extends StatefulWidget {
   @override
   _UsersPageState createState() => _UsersPageState();
@@ -65,7 +66,6 @@ class _UsersPageState extends State<UsersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[900],
       drawer: SideBar(),
       appBar: AppBar(
         title: Text(
@@ -75,46 +75,103 @@ class _UsersPageState extends State<UsersPage> {
         backgroundColor: Colors.blue[900],
         iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: users.isEmpty
-            ? Center(
-          child: Text(
-            "No users available",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-        )
-            : ListView.builder(
-          itemCount: users.length,
-          itemBuilder: (context, index) {
-            final user = users[index];
-            return Card(
-              color: Colors.blue[700],
-              margin: EdgeInsets.symmetric(vertical: 8.0),
-              child: ListTile(
-                title: Text(user.email, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                subtitle: Text(
-                  "Matricule: ${user.matricule}\nRole: ${user.role}",
-                  style: TextStyle(color: Colors.white70),
-                ),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
-                  onPressed: () => _showDeleteConfirmationDialog(user),
-                ),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Image de fond
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/background.jpg"),
+                fit: BoxFit.cover,
               ),
-            );
-          },
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white,
-        child: Icon(Icons.add, color: Colors.blue[900]),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => AjoutPage()),
-          );
-        },
+            ),
+          ),
+          // Contenu semi-transparent pour la lisibilité
+          Center(
+            child: Container(
+              width: 500,
+              height: 600,
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.8), // Cadre semi-transparent
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    offset: Offset(0, 4),
+                    blurRadius: 6,
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  // Liste des utilisateurs
+                  Expanded(
+                    child: users.isEmpty
+                        ? Center(
+                      child: Text(
+                        "No users available",
+                        style: TextStyle(color: Colors.blue[900], fontSize: 18),
+                      ),
+                    )
+                        : ListView.builder(
+                      itemCount: users.length,
+                      itemBuilder: (context, index) {
+                        final user = users[index];
+                        return Card(
+                          color: Colors.blue[900], // Assombrir la carte
+                          margin: EdgeInsets.symmetric(vertical: 8.0),
+                          child: ListTile(
+                            title: Text(
+                              user.email,
+                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(
+                              "Matricule: ${user.matricule}\nRole: ${user.role}",
+                              style: TextStyle(color: Colors.white70),
+                            ),
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => _showDeleteConfirmationDialog(user),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  // Add Button inside the card
+                  Container(
+                    alignment: Alignment.bottomCenter,
+                    margin: EdgeInsets.only(top: 20),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AjoutPage()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue[900],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.add, color: Colors.white),
+                          SizedBox(width: 8),
+                          Text("Add User", style: TextStyle(color: Colors.white)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
