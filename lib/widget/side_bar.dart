@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pdcs_frontend/activity/auth/Login.dart';
 import 'package:pdcs_frontend/activity/s_administrateur/users.dart';
-import '../activity/Home.dart';
+import '../activity/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SideBar extends StatefulWidget {

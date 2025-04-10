@@ -27,12 +27,20 @@ class TextFieldWidget extends StatelessWidget {
         labelText: labelText,
         labelStyle: TextStyle(color: textColor), // Set label color
         prefixIcon: Icon(icon, color: iconColor), // Set icon color
-        border: OutlineInputBorder(),
+        filled: true,
+        fillColor: Colors.white, // White background
+        contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue[900]!, width: 2), // Blue border color and width
+        ),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white), // White border
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue[900]!, width: 2), // Blue border color
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white, width: 2.0), // Highlight border
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide(color: Colors.blue[900]!, width: 2), // Blue border color on focus
         ),
       ),
     );

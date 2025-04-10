@@ -50,45 +50,90 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[900],
-      appBar: AppBar(backgroundColor: Colors.blue[900]),
-      body: Padding(
-        padding: EdgeInsets.all(20.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Set Password for ${widget.email ?? 'Unknown'}",
-                style: TextStyle(fontSize: 16, color: Colors.white),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Background image
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/background.jpg"), // Set your background image here
+                fit: BoxFit.cover, // Cover the screen with the image
               ),
-              SizedBox(height: 20),
-              TextFieldWidget(
-                labelText: "Password",
-                obscureText: true,
-                controller: _newPasswordController,
-                icon: Icons.lock,
-                iconColor: Colors.white, // Set icon color to white
-                textColor: Colors.white, // Set text color to white
-              ),
-              SizedBox(height: 20),
-              TextFieldWidget(
-                labelText: "Confirm Password",
-                obscureText: true,
-                controller: _confirmPasswordController,
-                icon: Icons.lock_outline,
-                iconColor: Colors.white, // Set icon color to white
-                textColor: Colors.white, // Set text color to white
-              ),
-              SizedBox(height: 20),
-              ButtonWidget(
-                text: "Set Password",
-                onPressed: _submitForm,
-              ),
-            ],
+            ),
           ),
-        ),
+          // Main content with semi-transparent background
+          Center(
+            child: Container(
+              width: 500,
+              height: 600,
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.8), // Semi-transparent background
+                borderRadius: BorderRadius.circular(10), // Rounded corners
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    offset: Offset(0, 4),
+                    blurRadius: 6,
+                  ),
+                ],
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Image.asset(
+                          'assets/bulgin.png', // Custom logo
+                          height: 110, // Logo height
+                          width: 150,  // Logo width
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      "Set Password for ${widget.email ?? 'Unknown'}",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.blue[900],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 40),
+                    // New Password TextField
+                    TextFieldWidget(
+                      labelText: "Password",
+                      controller: _newPasswordController,
+                      icon: Icons.lock,
+                      obscureText: true,
+                      iconColor: Colors.blue[900]!,
+                      textColor: Colors.blue[900]!,
+                    ),
+                    SizedBox(height: 20),
+                    // Confirm Password TextField
+                    TextFieldWidget(
+                      labelText: "Confirm Password",
+                      controller: _confirmPasswordController,
+                      icon: Icons.lock_outline,
+                      obscureText: true,
+                      iconColor: Colors.blue[900]!,
+                      textColor: Colors.blue[900]!,
+                    ),
+                    SizedBox(height: 40),
+                    // Set Password Button
+                    ButtonWidget(
+                      text: "Set Password",
+                      onPressed: _submitForm,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

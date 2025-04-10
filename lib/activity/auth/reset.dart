@@ -27,15 +27,15 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         return;
       }
       try {
-        bool response= await Apiuser.restpass(widget.token!, widget.email!, _newPasswordController.text);
-        if(response==true){
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Password has been reset successfully.')),
-        );
+        bool response = await Apiuser.restpass(widget.token!, widget.email!, _newPasswordController.text);
+        if (response == true) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Password has been reset successfully.')),
+          );
 
-        // Navigate to the login page after success
-        Navigator.pushReplacementNamed(context, '/login');
-        }else{
+          // Navigate to the login page after success
+          Navigator.pushReplacementNamed(context, '/login');
+        } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Link has been expired.')),
           );
@@ -52,45 +52,90 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[900],
-      appBar: AppBar(backgroundColor: Colors.blue[900]),
-      body: Padding(
-        padding: EdgeInsets.all(20.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Reset Password for ${widget.email ?? 'Unknown'}",
-                style: TextStyle(fontSize: 16, color: Colors.white),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Background image
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/background.jpg"),
+                fit: BoxFit.cover, // Cover the screen with the image
               ),
-              SizedBox(height: 20),
-              TextFieldWidget(
-                labelText: "New Password",
-                controller: _newPasswordController,
-                icon: Icons.lock,
-                obscureText: true,
-                iconColor: Colors.white,
-                textColor: Colors.white,
-              ),
-              SizedBox(height: 20),
-              TextFieldWidget(
-                labelText: "Confirm Password",
-                controller: _confirmPasswordController,
-                icon: Icons.lock_outline,
-                obscureText: true,
-                iconColor: Colors.white,
-                textColor: Colors.white,
-              ),
-              SizedBox(height: 20),
-              ButtonWidget(
-                text: "Reset Password",
-                onPressed: _submitForm,
-              ),
-            ],
+            ),
           ),
-        ),
+          // Main content with semi-transparent background
+          Center(
+            child: Container(
+              width: 500,
+              height: 600,
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.8), // Semi-transparent background
+                borderRadius: BorderRadius.circular(10), // Rounded corners
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    offset: Offset(0, 4),
+                    blurRadius: 6,
+                  ),
+                ],
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Image.asset(
+                          'assets/bulgin.png', // Custom logo
+                          height: 110, // Logo height
+                          width: 150,  // Logo width
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      "Reset Password for ${widget.email ?? 'Unknown'}",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.blue[900],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 40),
+                    // New Password TextField
+                    TextFieldWidget(
+                      labelText: "New Password",
+                      controller: _newPasswordController,
+                      icon: Icons.lock,
+                      obscureText: true,
+                      iconColor: Colors.blue[900]!,
+                      textColor: Colors.blue[900]!,
+                    ),
+                    SizedBox(height: 20),
+                    // Confirm Password TextField
+                    TextFieldWidget(
+                      labelText: "Confirm Password",
+                      controller: _confirmPasswordController,
+                      icon: Icons.lock_outline,
+                      obscureText: true,
+                      iconColor: Colors.blue[900]!,
+                      textColor: Colors.blue[900]!,
+                    ),
+                    SizedBox(height: 40),
+                    // Reset Password Button
+                    ButtonWidget(
+                      text: "Reset Password",
+                      onPressed: _submitForm,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
