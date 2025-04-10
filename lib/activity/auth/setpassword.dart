@@ -4,10 +4,9 @@ import '../../widget/ButtonWidget.dart';
 import '../../api/apiuser.dart';
 
 class SetPasswordPage extends StatefulWidget {
-  final String? token;
-  final String? email;
+  final String verificationId;
 
-  SetPasswordPage({this.token, this.email});
+  SetPasswordPage({required this.verificationId});
 
   @override
   _SetPasswordPageState createState() => _SetPasswordPageState();
@@ -18,31 +17,48 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
 
+  String? email;
+  String? token;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadVerificationData();
+  }
+
+  Future<void> _loadVerificationData() async {
+    final result = await Apiuser.fetchTokenAndEmail(widget.verificationId);
+    if (result != null) {
+      setState(() {
+        email = result['email'];
+        token = result['token'];
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Invalid or expired verification link.")),
+      );
+    }
+  }
+
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      if (widget.token == null || widget.email == null) {
+      if (token == null || email == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Invalid set password link.")),
+          SnackBar(content: Text("Verification info missing.")),
         );
         return;
       }
-      try {
-        bool result = await Apiuser.setpass(widget.token!, widget.email!, _newPasswordController.text);
-        if (result) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Password has been set successfully.')),
-          );
-          Navigator.pushReplacementNamed(context, '/login');
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error setting password. Please try again.')),
-          );
-        }
-      } catch (error) {
+
+      bool result = await Apiuser.setpass(token!, email!, _newPasswordController.text);
+      if (result) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error setting password. Please try again.")),
+          SnackBar(content: Text('Password has been set successfully.')),
         );
-        print("Error: $error");
+        Navigator.pushReplacementNamed(context, '/login');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error setting password. Please try again.')),
+        );
       }
     }
   }
@@ -52,7 +68,9 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
     return Scaffold(
       backgroundColor: Colors.blue[900],
       appBar: AppBar(backgroundColor: Colors.blue[900]),
-      body: Padding(
+      body: email == null
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
         padding: EdgeInsets.all(20.0),
         child: Form(
           key: _formKey,
@@ -60,7 +78,7 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "Set Password for ${widget.email ?? 'Unknown'}",
+                "Set Password for $email",
                 style: TextStyle(fontSize: 16, color: Colors.white),
               ),
               SizedBox(height: 20),
@@ -69,8 +87,8 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
                 obscureText: true,
                 controller: _newPasswordController,
                 icon: Icons.lock,
-                iconColor: Colors.white, // Set icon color to white
-                textColor: Colors.white, // Set text color to white
+                iconColor: Colors.white,
+                textColor: Colors.white,
               ),
               SizedBox(height: 20),
               TextFieldWidget(
@@ -78,8 +96,8 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
                 obscureText: true,
                 controller: _confirmPasswordController,
                 icon: Icons.lock_outline,
-                iconColor: Colors.white, // Set icon color to white
-                textColor: Colors.white, // Set text color to white
+                iconColor: Colors.white,
+                textColor: Colors.white,
               ),
               SizedBox(height: 20),
               ButtonWidget(
@@ -93,3 +111,4 @@ class _SetPasswordPageState extends State<SetPasswordPage> {
     );
   }
 }
+
