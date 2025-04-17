@@ -12,18 +12,13 @@ class Apiuser {
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
-        // Extract token, user info, and session ID
         String token = data['token'];
         String email = data['email'];
         String role = data['role'];
-
-        // Save to SharedPreferences
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('token', token);
         await prefs.setString('email', email);
         await prefs.setString('role', role);
-
         print("Login successful!");
         return true;
       } else {
@@ -113,7 +108,6 @@ class Apiuser {
       final response = await http.get(
         Uri.parse('$baseurl/verification/?vid=$verificationId'),
       );
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return {
@@ -129,11 +123,9 @@ class Apiuser {
       return null;
     }
   }
-
   static Future<List<User>> getusers() async {
     try {
       final response = await http.get(Uri.parse('$baseurl/getall/'));
-
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         return data.map((user) => User.fromJson(user)).toList();
@@ -150,9 +142,9 @@ class Apiuser {
     try {
       final response = await http.delete(Uri.parse('$baseurl/delete/$id/'));
       if (response.statusCode == 204) {
-        return true; // Successfully deleted
+        return true;
       } else {
-        return false; // Deletion failed
+        return false;
       }
     } catch (e) {
       print("Error: $e");

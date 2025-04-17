@@ -2,45 +2,36 @@ import 'package:flutter/material.dart';
 
 class TextFieldWidget extends StatelessWidget {
   final String labelText;
+  final bool obscureText;
   final TextEditingController controller;
   final IconData icon;
-  final bool obscureText;
-  final Color iconColor; // New parameter for icon color
-  final Color textColor; // New parameter for text color
+  final Color iconColor;
+  final Color textColor;
+  final Widget? suffixIcon;  // Add this line
 
   TextFieldWidget({
     required this.labelText,
     required this.controller,
     required this.icon,
+    required this.iconColor,
+    required this.textColor,
+    this.suffixIcon,  // Add this line
     this.obscureText = false,
-    this.iconColor = Colors.black, // Default color
-    this.textColor = Colors.black, // Default color
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       obscureText: obscureText,
-      style: TextStyle(color: textColor), // Set text color
+      style: TextStyle(color: textColor),
       decoration: InputDecoration(
         labelText: labelText,
-        labelStyle: TextStyle(color: textColor), // Set label color
-        prefixIcon: Icon(icon, color: iconColor), // Set icon color
-        filled: true,
-        fillColor: Colors.white, // White background
-        contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+        labelStyle: TextStyle(color: textColor),
+        prefixIcon: Icon(icon, color: iconColor),
+        suffixIcon: suffixIcon,  // Include the suffixIcon in the decoration
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Colors.blue[900]!, width: 2), // Blue border color and width
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Colors.blue[900]!, width: 2), // Blue border color
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: Colors.blue[900]!, width: 2), // Blue border color on focus
+          borderRadius: BorderRadius.circular(8),
         ),
       ),
     );

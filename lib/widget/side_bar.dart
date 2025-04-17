@@ -3,6 +3,8 @@ import 'package:pdcs_frontend/activity/auth/Login.dart';
 import 'package:pdcs_frontend/activity/s_administrateur/users.dart';
 import '../activity/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pdcs_frontend/activity/rs_production/production.dart';
+import 'package:pdcs_frontend/activity/rs_planification/planification.dart';
 
 class SideBar extends StatefulWidget {
   @override
@@ -17,12 +19,6 @@ class _SideBarState extends State<SideBar> {
   void initState() {
     super.initState();
     _loadRole();
-  }
-
-  Future<void> _setRole() async {
-    final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('role','aaaaa'); // Ensure state updates properly
-
   }
   Future<void> _loadRole() async {
     final prefs = await SharedPreferences.getInstance();
@@ -44,7 +40,7 @@ class _SideBarState extends State<SideBar> {
 
     await _loadRole();
 
-    print("Reset Role: $_role"); // This now prints the correct value
+    print("Reset Role: $_role");
     print("Reset Email: $_email");
   }
 
@@ -99,7 +95,7 @@ class _SideBarState extends State<SideBar> {
       ListTile(
         leading: Icon(Icons.settings),
         title: Text('Production'),
-        onTap: () => Navigator.pop(context),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ProductionPage())),
       ),
       ListTile(
         leading: Icon(Icons.stop),
@@ -109,7 +105,7 @@ class _SideBarState extends State<SideBar> {
       ListTile(
         leading: Icon(Icons.next_plan),
         title: Text('Planification'),
-        onTap: () => Navigator.pop(context),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => PlanificationPage())),
       ),
       Divider(),
       ListTile(
@@ -117,7 +113,7 @@ class _SideBarState extends State<SideBar> {
         title: Text('Logout'),
         onTap: () async {
           await _defaultRole(); // Call the function first
-          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage())); // Then navigate
+          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
         },
       ),
     ];
@@ -133,7 +129,7 @@ class _SideBarState extends State<SideBar> {
       ListTile(
         leading: Icon(Icons.next_plan),
         title: Text('Planification'),
-        onTap: () => Navigator.pop(context),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => PlanificationPage())),
       ),
       Divider(),
       ListTile(
@@ -141,7 +137,7 @@ class _SideBarState extends State<SideBar> {
         title: Text('Logout'),
         onTap: () {
           _defaultRole(); // Call the function first
-          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage())); // Then navigate
+          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
         },
       ),
     ];
@@ -157,7 +153,7 @@ class _SideBarState extends State<SideBar> {
       ListTile(
         leading: Icon(Icons.settings),
         title: Text('Production'),
-        onTap: () => Navigator.pop(context),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ProductionPage())),
       ),
       ListTile(
         leading: Icon(Icons.stop),
@@ -169,8 +165,8 @@ class _SideBarState extends State<SideBar> {
         leading: Icon(Icons.logout),
         title: Text('Logout'),
         onTap: () {
-          _defaultRole(); // Call the function first
-          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage())); // Then navigate
+          _defaultRole();
+          Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
         },
       ),
     ];

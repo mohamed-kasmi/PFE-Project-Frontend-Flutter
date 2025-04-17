@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import '../../models/machine.dart';  // Import the Machine class file
-import 'machine_detail_screen.dart';  // Import the MachineDetailScreen file
+import '../../models/machine.dart';  // Import your Machine model
+import 'machine_detail_screen.dart';  // Import your Machine detail screen
 
 class DashboardScreen extends StatelessWidget {
-  // Example list of machines
   final List<Machine> machines = List.generate(
     9,
         (index) => Machine(
       name: "Machine ${index + 1}",
-      imagePath: "assets/machine${index + 1}.jpg", // Ensure that these images exist
-      quantityPrepared: (index + 1) * 10,
-      quantityToDo: (index + 1) * 20,
-      totalQuantity: (index + 1) * 30,
+      imagePath: "assets/machine${index + 1}.jpg", // Make sure images exist
+      quantityPrepared: (index + 1) * 10.0,  // Assuming this is a double
+      quantityToDo: (index + 1) * 20.0,  // Assuming this is a double
+      totalQuantity: (index + 1) * 30.0,
+          image: 'assets/machine1.jpg',// Assuming this is a double
     ),
   );
 
@@ -19,43 +19,61 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dashboard'),
+        title: const Text('Dashboard'),
         backgroundColor: Colors.blue[900],
       ),
-      body: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          childAspectRatio: 0.75,
-        ),
-        itemCount: machines.length,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            onTap: () {
-              // Navigate to the MachineDetailScreen
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => MachineDetailScreen(machine: machines[index]),
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: 0.75,
+          ),
+          itemCount: machines.length,
+          itemBuilder: (context, index) {
+            final machine = machines[index];
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => MachineDetailScreen(machine: machine),
+                  ),
+                );
+              },
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              );
-            },
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                elevation: 5,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                        child: Image.asset(
+                          machine.imagePath ?? 'assets/default_image.jpg',  // Use default if imagePath is null
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      machine.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                ),
               ),
-              elevation: 5,
-              child: Column(
-                children: [
-                  // Your card content here, such as the image and machine name
-                  Image.asset(machines[index].imagePath),
-                  Text(machines[index].name),
-                ],
-              ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

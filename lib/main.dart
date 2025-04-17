@@ -9,18 +9,14 @@ import 'activity/s_administrateur/ajout.dart';
 import 'activity/screen/dashboard.dart';
 import 'activity/rs_production/production.dart';
 import 'activity/rs_planification/planification.dart';
-
-
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     initialRoute: '/',
     onGenerateRoute: (settings) {
-      Uri uri = Uri.parse(settings.name!); // Parse the URL
-
+      Uri uri = Uri.parse(settings.name!);
       if (uri.path == '/reset-password') {
         String? verificationId = uri.queryParameters['vid'];
-
         if (verificationId != null) {
           return MaterialPageRoute(
             builder: (context) => ResetPasswordPage(verificationId: verificationId),
@@ -35,7 +31,6 @@ void main() {
       }
       if (uri.path == '/set-password') {
         String? verificationId = uri.queryParameters['vid'];
-
         if (verificationId != null) {
           return MaterialPageRoute(
             builder: (context) => SetPasswordPage(verificationId: verificationId),
@@ -48,7 +43,6 @@ void main() {
           );
         }
       }
-      // Default Routes
       switch (settings.name) {
         case '/':
           return MaterialPageRoute(builder: (context) => HomePage());

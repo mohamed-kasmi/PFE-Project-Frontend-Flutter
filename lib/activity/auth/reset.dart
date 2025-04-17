@@ -18,11 +18,16 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final TextEditingController _confirmPasswordController = TextEditingController();
   String? email;
   String? token;
+
+  bool _isNewPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
+
   @override
   void initState() {
     super.initState();
     _loadVerificationData();
   }
+
   Future<void> _loadVerificationData() async {
     final result = await Apiuser.fetchTokenAndEmail(widget.verificationId);
     if (result != null) {
@@ -36,6 +41,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       );
     }
   }
+
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       if (token == null || email == null) {
@@ -45,8 +51,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         return;
       }
       try {
-        bool response= await Apiuser.restpass(token!, email!, _newPasswordController.text);
-        if(response==true){
+        bool response = await Apiuser.restpass(token!, email!, _newPasswordController.text);
+        if (response == true) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Password has been reset successfully.')),
           );
@@ -127,24 +133,50 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         ),
                       ),
                       SizedBox(height: 40),
-                      // New Password TextField
+                      // New Password TextField with visibility toggle
                       TextFieldWidget(
                         labelText: "New Password",
                         controller: _newPasswordController,
                         icon: Icons.lock,
-                        obscureText: true,
+                        obscureText: !_isNewPasswordVisible, // Toggle visibility
                         iconColor: Colors.blue[900]!,
                         textColor: Colors.blue[900]!,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isNewPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Colors.blue[900],
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isNewPasswordVisible = !_isNewPasswordVisible;
+                            });
+                          },
+                        ),
                       ),
                       SizedBox(height: 20),
-                      // Confirm Password TextField
+                      // Confirm Password TextField with visibility toggle
                       TextFieldWidget(
                         labelText: "Confirm Password",
                         controller: _confirmPasswordController,
                         icon: Icons.lock_outline,
-                        obscureText: true,
+                        obscureText: !_isConfirmPasswordVisible, // Toggle visibility
                         iconColor: Colors.blue[900]!,
                         textColor: Colors.blue[900]!,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isConfirmPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Colors.blue[900],
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                            });
+                          },
+                        ),
                       ),
                       SizedBox(height: 40),
                       // Reset Password Button
