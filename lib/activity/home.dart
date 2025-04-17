@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../widget/side_bar.dart'; // Ensure that this file exists
-import 'screen/dashboard.dart';  // The dashboard screen will be defined separately
-import '../models/machine.dart'; // Import the Machine class
-import 'package:percent_indicator/percent_indicator.dart'; // Import the package
+import '../widget/side_bar.dart';
+import 'screen/dashboard.dart';
+import '../models/machine.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 class HomePage extends StatelessWidget {
   static final List<String> imagePaths = [
     "assets/machine1.jpeg",
@@ -15,7 +15,6 @@ class HomePage extends StatelessWidget {
     "assets/machine2.jpg",
     "assets/machine3.jpg",
   ];
-
   final List<Machine> machines = List.generate(
     9,
         (index) => Machine(
@@ -26,12 +25,11 @@ class HomePage extends StatelessWidget {
       totalQuantity: (index + 1) * 40,
     ),
   );
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue[900],
-      drawer: SideBar(), // Ensure that the SideBar widget is implemented properly
+      drawer: SideBar(),
       appBar: AppBar(
         backgroundColor: Colors.blue[900],
         elevation: 0,
@@ -50,10 +48,10 @@ class HomePage extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 5, // 3 machines per row (adjust as needed)
+            crossAxisCount: 5,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
-            childAspectRatio: 0.75, // Adjust this value for card size
+            childAspectRatio: 0.75,
           ),
           itemCount: machines.length,
           itemBuilder: (context, index) {
@@ -64,23 +62,19 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
 class MachineCard extends StatelessWidget {
   final Machine machine;
-
   const MachineCard({Key? key, required this.machine}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    double progress = machine.quantityPrepared / machine.totalQuantity; // Calculate progress
-    double percentage = progress * 100; // Calculate percentage
-
+    double progress = machine.quantityPrepared / machine.totalQuantity;
+    double percentage = progress * 100;
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => MachineDashboard(machine: machine), // This screen needs to be defined
+            builder: (_) => MachineDashboard(machine: machine),
           ),
         );
       },
@@ -110,34 +104,30 @@ class MachineCard extends StatelessWidget {
               Text("Prepared: ${machine.quantityPrepared}", style: TextStyle(fontSize: 14)),
               Text("To Do: ${machine.quantityToDo}", style: TextStyle(fontSize: 14)),
               Text("Total: ${machine.totalQuantity}", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-
-              // Add LinearProgressIndicator with black border and thicker progress bar
-              SizedBox(height: 10), // Add some space between text and progress bar
+              SizedBox(height: 10),
               Stack(
                 children: [
-                  // Outer container with thinner border
                   Container(
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 1), // Thin black border
-                      borderRadius: BorderRadius.circular(8), // Rounded corners for the border
+                      border: Border.all(color: Colors.black, width: 1),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Container(
-                      height: 12, // Increased thickness of the progress bar
+                      height: 12,
                       child: LinearProgressIndicator(
-                        value: progress, // Set the progress value between 0.0 and 1.0
-                        backgroundColor: Colors.grey[200], // Background color of the progress bar
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.blue), // Set to blue color
+                        value: progress,
+                        backgroundColor: Colors.grey[200],
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                       ),
                     ),
                   ),
-                  // Centered text for percentage inside the bar
                   Center(
                     child: Text(
-                      "${percentage.toStringAsFixed(0)}%", // Show percentage
+                      "${percentage.toStringAsFixed(0)}%",
                       style: TextStyle(
-                        color: Colors.black, // Text color set to black
-                        fontWeight: FontWeight.normal, // Remove bold styling
-                        fontSize: 10, // Reduced font size (smaller)
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 10,
                       ),
                     ),
                   ),
@@ -150,20 +140,12 @@ class MachineCard extends StatelessWidget {
     );
   }
 }
-
-
-
-
 class MachineDashboard extends StatelessWidget {
   final Machine machine;
-
   const MachineDashboard({Key? key, required this.machine}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    // Calculate progress
     double progress = machine.quantityPrepared / machine.totalQuantity;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(machine.name),
@@ -176,7 +158,7 @@ class MachineDashboard extends StatelessWidget {
             CircularPercentIndicator(
               radius: 120.0,
               lineWidth: 12.0,
-              percent: progress,  // Use the progress here
+              percent: progress,
               center: Text("${(progress * 100).toStringAsFixed(1)}%"),
               circularStrokeCap: CircularStrokeCap.round,
               progressColor: Colors.blue,
@@ -196,15 +178,12 @@ class MachineDashboard extends StatelessWidget {
     );
   }
 }
-
-// Sample Machine class
 class Machine {
   final String name;
   final String imagePath;
   final int quantityPrepared;
   final int quantityToDo;
   final int totalQuantity;
-
   Machine({
     required this.name,
     required this.imagePath,

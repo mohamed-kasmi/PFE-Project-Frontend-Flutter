@@ -9,7 +9,12 @@ class MachineDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double progress = machine.quantityPrepared / machine.totalQuantity;
+    // Handle null values for quantityPrepared and totalQuantity
+    double quantityPrepared = machine.quantityPrepared ?? 0.0;  // Default to 0.0 if null
+    double totalQuantity = machine.totalQuantity ?? 1.0;  // Default to 1.0 if null to avoid division by zero
+
+    // Calculate progress
+    double progress = quantityPrepared / totalQuantity;
 
     return Scaffold(
       appBar: AppBar(
@@ -60,7 +65,6 @@ class MachineDetailScreen extends StatelessWidget {
                   progressColor: Colors.blue,  // Color for the progress circle
                   backgroundColor: Colors.grey[300] ?? Colors.grey,  // Ensure background color is non-null
                 ),
-
               ),
               SizedBox(height: 20),
 

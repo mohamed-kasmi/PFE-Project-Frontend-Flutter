@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../widget/Login_Elements/TextFieldWidget.dart';
 import '../../widget/Login_Elements/LoginButtonWidget.dart';
 import '../../widget/side_bar.dart';
 import '../auth/Forget.dart';
@@ -10,28 +9,23 @@ class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
 }
-
 class _LoginState extends State<Login> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isLoading = false;
-
+  bool _isPasswordVisible = false;
   Widget sizedBox(double height) => SizedBox(height: height);
-
   void handleLogin() async {
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
-
     if (email.isEmpty || password.isEmpty) {
       showSnackbar("Please enter email and password");
       return;
     }
-
     setState(() {
       isLoading = true;
     });
-
     try {
       bool result = await Apiuser.auth(email, password);
       if (result) {
@@ -50,13 +44,11 @@ class _LoginState extends State<Login> {
       });
     }
   }
-
   void showSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,24 +57,22 @@ class _LoginState extends State<Login> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Image de fond
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage("assets/background.jpg"),
-                fit: BoxFit.cover, // Ajuste l’image pour couvrir tout l’écran
+                fit: BoxFit.cover,
               ),
             ),
           ),
-          // Contenu principal avec effet de fond semi-transparent
           Center(
             child: Container(
               width: 500,
               height: 600,
               padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.8), // Semi-transparent background
-                borderRadius: BorderRadius.circular(10), // Rounded corners
+                color: Colors.white.withOpacity(0.8),
+                borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black26,
@@ -96,12 +86,12 @@ class _LoginState extends State<Login> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start, // Push the logo to the right
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Image.asset(
                           'assets/bulgin.png',
-                          height: 110,  // Set the height of the logo image
-                          width: 150,   // Set the width of the logo image
+                          height: 110,
+                          width: 150,
                         ),
                       ],
                     ),
@@ -116,27 +106,43 @@ class _LoginState extends State<Login> {
                       ),
                     ),
                     sizedBox(40),
-                    // Email TextField
-                    TextFieldWidget(
-                      labelText: "Enter your email",
-                      obscureText: false,
+                    TextField(
                       controller: emailController,
-                      icon: Icons.email,
-                      iconColor: Colors.blue[900]!,
-                      textColor: Colors.blue[900]!,
+                      obscureText: false,
+                      style: TextStyle(color: Colors.blue[900]),
+                      decoration: InputDecoration(
+                        labelText: "Enter your email",
+                        labelStyle: TextStyle(color: Colors.blue[900]),
+                        prefixIcon: Icon(Icons.email, color: Colors.blue[900]),
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                     sizedBox(20),
-                    // Password TextField
-                    TextFieldWidget(
-                      labelText: "Enter your password",
-                      obscureText: true,
+                    TextField(
                       controller: passwordController,
-                      icon: Icons.lock,
-                      iconColor: Colors.blue[900]!,
-                      textColor: Colors.blue[900]!,
+                      obscureText: !_isPasswordVisible,
+                      style: TextStyle(color: Colors.blue[900]),
+                      decoration: InputDecoration(
+                        labelText: "Enter your password",
+                        labelStyle: TextStyle(color: Colors.blue[900]),
+                        prefixIcon: Icon(Icons.lock, color: Colors.blue[900]),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Colors.blue[900],
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isPasswordVisible = !_isPasswordVisible;
+                            });
+                          },
+                        ),
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                     sizedBox(40),
-                    // Login Button
                     isLoading
                         ? CircularProgressIndicator(color: Colors.blue[900])
                         : LoginButtonWidget(
@@ -144,12 +150,12 @@ class _LoginState extends State<Login> {
                       onPressed: handleLogin,
                     ),
                     sizedBox(15),
-                    // Forgot Password link
                     TextButton(
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
+                          MaterialPageRoute(
+                              builder: (context) => ForgotPasswordPage()),
                         );
                       },
                       child: Text(
