@@ -8,8 +8,8 @@ class Apimachinedata{
     try {
       final response = await http.get(Uri.parse('$baseurl/machines/'));
       if (response.statusCode == 200) {
-        List<dynamic> data = jsonDecode(response.body);
-        return data.map((machines) => MachineData.fromJson(machines)).toList();
+        List<dynamic> jsonList = jsonDecode(response.body);
+        return jsonList.map((e) => MachineData.fromJson(e)).toList();
       } else {
         print("Failed to fetch machines");
         return [];
@@ -17,6 +17,36 @@ class Apimachinedata{
     } catch (e) {
     print("Error: $e");
     return [];
+    }
+  }
+  static Future<List<MachineData>> getmachinebyname(String name) async{
+    try{
+      final response = await http.get(Uri.parse('$baseurl/machinen/?name=$name'));
+      if (response.statusCode == 200) {
+        List<dynamic> jsonList = jsonDecode(response.body);
+        return jsonList.map((e) => MachineData.fromJson(e)).toList();
+      } else {
+        print("Failed to fetch machines");
+        return [];
+      }
+    }catch (e) {
+      print("Error: $e");
+      return [];
+    }
+  }
+  static Future<List<MachineData>> getmachinebydate(String startdate, String enddate) async{
+    try{
+      final response = await http.get(Uri.parse('$baseurl/machined/?start_date=$startdate&end_date=$enddate'));
+      if (response.statusCode == 200) {
+        List<dynamic> jsonList = jsonDecode(response.body);
+        return jsonList.map((e) => MachineData.fromJson(e)).toList();
+      } else {
+        print("Failed to fetch machines");
+        return [];
+      }
+    }catch (e) {
+      print("Error: $e");
+      return [];
     }
   }
 }
