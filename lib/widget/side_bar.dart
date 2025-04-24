@@ -95,7 +95,7 @@ class _SideBarState extends State<SideBar> {
       ListTile(
         leading: Icon(Icons.settings),
         title: Text('Production'),
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ProductionDashboard())),
+
       ),
       ListTile(
         leading: Icon(Icons.stop),
@@ -153,7 +153,6 @@ class _SideBarState extends State<SideBar> {
       ListTile(
         leading: Icon(Icons.settings),
         title: Text('Production'),
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ProductionDashboard())),
       ),
       ListTile(
         leading: Icon(Icons.stop),
