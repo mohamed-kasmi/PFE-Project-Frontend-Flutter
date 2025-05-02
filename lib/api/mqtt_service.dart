@@ -13,7 +13,7 @@ class MqttService {
   late final MqttClient _client;
 
   MqttService() {
-    const broker = '192.168.82.160';
+    const broker = '192.168.1.15';
     const port = 9001;
     const clientId = 'flutter_dashboard';
 

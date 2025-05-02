@@ -5,8 +5,9 @@ import 'package:percent_indicator/percent_indicator.dart';
 class MachineCard extends StatelessWidget {
   final String machineName;
   final Machine machine;
+  final bool isStopped;
 
-  const MachineCard({Key? key, required this.machineName, required this.machine}) : super(key: key);
+  const MachineCard({Key? key, required this.machineName, required this.machine,this.isStopped = false,}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

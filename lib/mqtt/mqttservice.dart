@@ -17,9 +17,9 @@ class MqttService {
 
 
   MqttService() {
-    const broker = '192.168.81.16';
+    const broker = '192.168.1.24';
     const port = 9001;
-    const clientId = 'flutter_unified_client';
+    final clientId = 'Client_${DateTime.now().millisecondsSinceEpoch}';
 
     if (kIsWeb) {
 
