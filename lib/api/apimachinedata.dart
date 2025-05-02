@@ -49,4 +49,23 @@ class Apimachinedata{
       return [];
     }
   }
+  static Future<List<MachineData>> getMachineByGranularity(
+      String startDate, String endDate, String name, String granularity) async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+            '$baseurl/getmachinebygranularity/?start_date=$startDate&end_date=$endDate&name=$name&granularity=$granularity'),
+      );
+      if (response.statusCode == 200) {
+        List<dynamic> jsonList = jsonDecode(response.body);
+        return jsonList.map((e) => MachineData.fromJson(e)).toList();
+      } else {
+        print("Failed to fetch machine data");
+        return [];
+      }
+    } catch (e) {
+      print("Error: $e");
+      return [];
+    }
+  }
 }
