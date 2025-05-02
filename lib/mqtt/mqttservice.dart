@@ -13,9 +13,11 @@ class MqttService {
   late final MqttClient _client;
   final List<String> _topics = ['testtopic', 'testtopic2','testtopic3'];
   MqttService() {
+
     const broker = '192.168.1.14';
     const port = 9001;
     final clientId = 'Client_${DateTime.now().millisecondsSinceEpoch}';
+
     if (kIsWeb) {
       _client = MqttBrowserClient('ws://$broker:$port', clientId);
     } else {

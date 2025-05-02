@@ -1,0 +1,56 @@
+import 'package:flutter/material.dart';
+import '../../mqtt/machinestream.dart';
+import '../../mqtt/mqttservice.dart';
+import '../../models/machine.dart';
+import '../../widget/side_bar.dart';
+import '../../provider/production_function/machine_grid.dart';
+
+class StopPage extends StatefulWidget {
+  @override
+  _StopPageState createState() => _StopPageState();
+}
+
+class _StopPageState extends State<StopPage> {
+  late MqttService _mqttService;
+  List<Machine> _machines = [];
+
+  final List<String> _machineTopics = ['testtopic', 'testtopic2', 'testtopic3'];
+
+  @override
+  void initState() {
+    super.initState();
+    _mqttService = MqttService();
+    _mqttService.machineStream.listen((data) {
+      setState(() {
+        _machines = data;
+      });
+    });
+    _mqttService.connect();
+  }
+
+  @override
+  void dispose() {
+    _mqttService.disconnect();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.blue[900],
+      drawer: SideBar(),
+      appBar: AppBar(
+        title: Text("Stop", style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.blue[900],
+        elevation: 0,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: Icon(Icons.menu, color: Colors.white),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+        ),
+      ),
+      body: MachineGrid(machineTopics: _machineTopics, machines: _machines),
+    );
+  }
+}
