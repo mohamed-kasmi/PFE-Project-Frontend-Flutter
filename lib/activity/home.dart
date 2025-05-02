@@ -1,4 +1,3 @@
-// home.dart
 import 'package:flutter/material.dart';
 import '../mqtt/mqttservice.dart';
 import '../widget/machinecard.dart';
@@ -44,7 +43,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.blue[900],
       drawer: SideBar(),
       appBar: AppBar(
-        title: Text("Home"),
+        title: Text("Home",style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.blue[900],
         elevation: 0,
         leading: Builder(
@@ -55,13 +54,12 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(11),
         child: LayoutBuilder(
           builder: (context, constraints) {
             double screenWidth = constraints.maxWidth;
-            double cardWidth = 400; // You can tweak this
+            double cardWidth = 400;
             int cardsPerRow = (screenWidth / cardWidth).floor().clamp(1, 4);
-
             return Wrap(
               spacing: 12,
               runSpacing: 12,

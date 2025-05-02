@@ -1,6 +1,7 @@
 class MachineData {
   final int id;
   final String machineName;
+  final int partNO;
   final DateTime dateInsertDay;
   final double runHoursDay;
   final double downHoursDay;
@@ -15,6 +16,7 @@ class MachineData {
   MachineData({
     required this.id,
     required this.machineName,
+    required this.partNO,
     required this.dateInsertDay,
     required this.runHoursDay,
     required this.downHoursDay,
@@ -32,6 +34,7 @@ class MachineData {
       id: json['id'],
       machineName: json['Machine_Name'],
       dateInsertDay: DateTime.parse(json['Date_Insert_Day']),
+      partNO: json['Part_NO'],
       runHoursDay: json['Run_Hours_Day'].toDouble(),
       downHoursDay: json['Down_Hours_Day'].toDouble(),
       goodQtyDay: json['Good_QTY_Day'],

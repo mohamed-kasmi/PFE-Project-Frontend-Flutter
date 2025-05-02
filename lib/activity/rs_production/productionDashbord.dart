@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../../api/mqtt_service.dart';
+import '../../mqtt/mqttservice.dart';
 import '../../models/production_data.dart';
 import '../../widget/side_bar.dart';
+import '../../mqtt/machinestream.dart';
+import '../../models/machine.dart';
 
 class ProductionDashboard extends StatefulWidget {
   const ProductionDashboard({Key? key}) : super(key: key);
@@ -12,18 +14,22 @@ class ProductionDashboard extends StatefulWidget {
 }
 
 class _ProductionDashboardState extends State<ProductionDashboard> {
-  final MqttService _mqttService = MqttService();
+  late MqttService _mqttService;
+  List<Machine> _machines = [];
   ProductionData? currentData;
 
   @override
   void initState() {
     super.initState();
-    _mqttService.connect();
-    _mqttService.stream.listen((data) {
+    _mqttService = MqttService();
+
+    _mqttService.machineStream.listen((data) {
       setState(() {
-        currentData = data;
+        _machines = data;
       });
     });
+
+    _mqttService.connect();
   }
 
   @override

@@ -3,7 +3,7 @@ import 'package:pdcs_frontend/activity/auth/Login.dart';
 import 'package:pdcs_frontend/activity/s_administrateur/users.dart';
 import '../activity/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:pdcs_frontend/activity/rs_production/productionDashbord.dart';
+import 'package:pdcs_frontend/activity/rs_production/dashboard.dart';
 import 'package:pdcs_frontend/activity/rs_planification/planification.dart';
 
 class SideBar extends StatefulWidget {
@@ -95,7 +95,7 @@ class _SideBarState extends State<SideBar> {
       ListTile(
         leading: Icon(Icons.settings),
         title: Text('Production'),
-
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => DashboardPage())),
       ),
       ListTile(
         leading: Icon(Icons.stop),
@@ -153,6 +153,7 @@ class _SideBarState extends State<SideBar> {
       ListTile(
         leading: Icon(Icons.settings),
         title: Text('Production'),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => DashboardPage())),
       ),
       ListTile(
         leading: Icon(Icons.stop),

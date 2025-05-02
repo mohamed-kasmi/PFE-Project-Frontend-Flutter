@@ -54,13 +54,29 @@ class Apimachinedata{
     try {
       final response = await http.get(
         Uri.parse(
-            '$baseurl/getmachinebygranularity/?start_date=$startDate&end_date=$endDate&name=$name&granularity=$granularity'),
+            '$baseurl/machinegranularity/?start_date=$startDate&end_date=$endDate&name=$name&granularity=$granularity'),
       );
       if (response.statusCode == 200) {
         List<dynamic> jsonList = jsonDecode(response.body);
         return jsonList.map((e) => MachineData.fromJson(e)).toList();
       } else {
         print("Failed to fetch machine data");
+        return [];
+      }
+    } catch (e) {
+      print("Error: $e");
+      return [];
+    }
+  }
+  static Future<List<String>> getMachineNames() async {
+    try {
+      final response = await http.get(Uri.parse('$baseurl/machinenames/'),
+      );
+      if (response.statusCode == 200) {
+        List<dynamic> jsonList = jsonDecode(response.body);
+        return jsonList.map((names) => names.toString()).toList();
+      } else {
+        print("Failed to fetch machine names");
         return [];
       }
     } catch (e) {

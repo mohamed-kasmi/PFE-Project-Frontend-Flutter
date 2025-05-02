@@ -10,7 +10,7 @@ import 'activity/screen/dashboard.dart';
 import 'activity/rs_production/productionDashbord.dart';
 import 'activity/rs_production/pro.dart';
 import 'activity/rs_planification/planification.dart';
-import 'activity/rs_production/Trs.dart';
+import 'activity/rs_production/dashboard.dart';
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,

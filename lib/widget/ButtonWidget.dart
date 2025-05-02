@@ -24,7 +24,7 @@ class ButtonWidget extends StatelessWidget {
         onPressed: onPressed,
         child: Text(
           text,
-          style: textStyle, // Use passed text style
+          style: textStyle,
         ),
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),

@@ -6,7 +6,6 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
-
 class PlanificationPage extends StatefulWidget {
   @override
   _PlanificationPageState createState() => _PlanificationPageState();

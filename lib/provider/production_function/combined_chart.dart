@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../../models/machinedata.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter/foundation.dart';
 
 class CombinedChartWidget extends StatelessWidget {
-  final List<Map<String, dynamic>> data;
+  final List<MachineData> data;
   final double maxY;
 
   const CombinedChartWidget({
@@ -13,102 +16,177 @@ class CombinedChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 300,
-      child: Stack(
+    final ScrollController _scrollController = ScrollController();
+    double chartWidth = kIsWeb
+        ? (data.length * 40 < 1880 ? 1880.0 : data.length * 40.0)
+        : (data.length * 40 < 400 ? 400.0 : data.length * 40.0);
+    bool bar = kIsWeb ? true : false ;
+    return SizedBox(
+      height: 420,
+      child: Column(
         children: [
-          _buildBarChart(),
-          Positioned.fill(child: _buildLineChart()),
-        ],
-      ),
-    );
-  }
-
-  BarChart _buildBarChart() {
-
-    return BarChart(
-
-      BarChartData(
-        barGroups: data.asMap().entries.map((entry) {
-          return BarChartGroupData(
-            x: entry.key,
-            barRods: [
-              BarChartRodData(
-                toY: entry.value["quantity"].toDouble(),
-                width: 18,
-                color: Colors.blue,
-                borderRadius: BorderRadius.circular(4),
+          Expanded(
+            child: Scrollbar(
+              controller: _scrollController,
+              thumbVisibility: bar,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                controller: _scrollController,
+                child: Container(
+                  width: chartWidth,
+                  child: _buildBarChart(),
+                ),
               ),
-            ],
-          );
-        }).toList(),
-        titlesData: FlTitlesData(
-          bottomTitles: AxisTitles(sideTitles: _bottomTitles),
-          leftTitles: AxisTitles(sideTitles: _leftTitles(maxY)),
-        ),
-        gridData: FlGridData(show: true),
-        borderData: FlBorderData(show: true),
-        alignment: BarChartAlignment.spaceEvenly,
-        minY: 0,
-        maxY: maxY,
-      ),
-    );
-  }
-
-  LineChart _buildLineChart() {
-    return LineChart(
-      LineChartData(
-        lineBarsData: [
-          LineChartBarData(
-            spots: data.asMap().entries.map((e) {
-              return FlSpot(e.key.toDouble(), e.value["efficiency"].toDouble());
-            }).toList(),
-            isCurved: true,
-            color: Colors.green,
-            barWidth: 3,
-            dotData: FlDotData(show: true),
-            belowBarData: BarAreaData(show: false),
+            ),
           ),
         ],
-        gridData: FlGridData(show: false),
-        titlesData: FlTitlesData(show: false),
-        borderData: FlBorderData(show: false),
-        lineTouchData: LineTouchData(
-          enabled: true,
-          touchTooltipData: LineTouchTooltipData(
-            tooltipBgColor: Colors.green.shade700,
-            getTooltipItems: (touchedSpots) {
-              return touchedSpots.map((spot) {
-                final index = spot.x.toInt();
-                final item = data[index];
-                return LineTooltipItem(
-                  'Date: ${item["date"]}\nEfficiency: ${item["efficiency"]}%\nQuantity: ${item["quantity"]}',
-                  TextStyle(color: Colors.white),
-                );
-              }).toList();
-            },
-          ),
-        ),
-        minX: -1.2,
-        maxX: data.length.toDouble()+0.5,
-        minY: 0,
-        maxY: maxY,
       ),
     );
   }
+  Widget _buildBarChart() {
+    Map<int, Color> partNoColors = {};
+    List<Color> availableColors = [
+      Colors.blue,
+      Colors.orange,
+      Colors.purple,
+      Colors.teal,
+      Colors.pink,
+      Colors.brown,
+      Colors.indigo,
+      Colors.cyan,
+    ];
+    int colorIndex = 0;
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(left: 12.0, bottom: 8.0),
+            child: Text(
+              'Quantity & OEE Dashboard',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Expanded(
+            child: BarChart(
+              BarChartData(
+                barGroups: data.asMap().entries.map((entry) {
+                  final item = entry.value;
+                  final oee = item.oeeDay * 100;
 
+                  if (!partNoColors.containsKey(item.partNO)) {
+                    partNoColors[item.partNO] = availableColors[colorIndex % availableColors.length];
+                    colorIndex++;
+                  }
+                  final barColor = partNoColors[item.partNO]!;
 
+                  return BarChartGroupData(
+                    x: entry.key,
+                    barRods: [
+                      BarChartRodData(
+                        toY: item.goodQtyDay.toDouble(),
+                        width: 18,
+                        color: barColor,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ],
+                  );
+                }).toList(),
+                titlesData: FlTitlesData(
+                  bottomTitles: AxisTitles(sideTitles: _bottomTitles),
+                  leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 50)),
+                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                ),
+                gridData: FlGridData(show: true),
+                borderData: FlBorderData(show: true),
+                alignment: BarChartAlignment.spaceEvenly,
+                minY: 0,
+                maxY: maxY,
+                barTouchData: BarTouchData(
+                  enabled: true,
+                  touchTooltipData: BarTouchTooltipData(
+                    tooltipBgColor: Colors.black87,
+                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                      final item = data[group.x.toInt()];
+                      final oee = (item.oeeDay * 100).toStringAsFixed(1);
+                      final qty = item.goodQtyDay;
+                      final partno = item.partNO;
+                      return BarTooltipItem(
+                        'OEE: $oee%\nQuantity: $qty\nPart Number: $partno',
+                        const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
   SideTitles get _bottomTitles => SideTitles(
     showTitles: true,
+    reservedSize: 55,
     getTitlesWidget: (value, meta) {
       final index = value.toInt();
-      return Text(data[index]["date"].substring(8));
+      if (index < 0 || index >= data.length) return const SizedBox();
+      final currentDate = data[index].dateInsertDay;
+      final day = DateFormat('dd').format(currentDate);
+      final currentMonth = DateFormat('MMM').format(currentDate);
+      final currentYear = DateFormat('yyyy').format(currentDate);
+      bool showMonth = true;
+      if (index > 0) {
+        final previousDate = data[index - 1].dateInsertDay;
+        final previousMonth = DateFormat('MMM').format(previousDate);
+        if (previousMonth == currentMonth) {
+          showMonth = false;
+        }
+      }
+      bool showYear = true;
+      if (index > 0) {
+        final previousDate = data[index - 1].dateInsertDay;
+        final previousYear = DateFormat('yyyy').format(previousDate);
+        if (previousYear == currentYear) {
+          showYear = false;
+        }
+      }
+      return Padding(
+        padding: const EdgeInsets.only(top: 2.0),
+        child: Column(
+          children: [
+            Text(day),
+            const SizedBox(height: 2),
+            showMonth
+                ? SizedBox(
+              width: 30,
+              child: Center(
+                child: Text(currentMonth, style: const TextStyle(fontSize: 10)),
+              ),
+            )
+                : const SizedBox(height: 12),
+            const SizedBox(height: 2),
+            showYear
+                ? SizedBox(
+              width: 30,
+              child: Center(
+                child: Text(currentYear, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+              ),
+            )
+                : const SizedBox(height: 12),
+          ],
+        ),
+      );
     },
   );
 
-  SideTitles _leftTitles(double maxY) => SideTitles(
-    showTitles: true,
-    interval: maxY > 20 ? (maxY / 5) : 5,
-    getTitlesWidget: (value, meta) => Text(value.toInt().toString()),
-  );
 }
+
