@@ -14,8 +14,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late MqttService _mqttService;
   List<Machine> _machines = [];
-
-  final List<String> _machineTopics = ['testtopic', 'testtopic2', 'testtopic3'];
+  final List<String> _machineTopics = ['misk01','misk02'];
 
   @override
   void initState() {
@@ -28,7 +27,7 @@ class _HomePageState extends State<HomePage> {
       });
     });
 
-    _mqttService.connect();
+    _mqttService.SubscribeMsg();
   }
 
   @override
@@ -76,13 +75,14 @@ class _HomePageState extends State<HomePage> {
                     total: 0,
                     oee: 0.0,
                     cycleTime: 0.0,
+                    status: 'offline',
                   ),
                 );
 
                 return SizedBox(
                   width: (screenWidth - (cardsPerRow - 1) * 12) / cardsPerRow,
                   child: MachineCard(
-                    machineName: topic.replaceAll("testtopic", "PRESS "),
+                    machineName: topic.replaceAll("misk", "Misk "),
                     machine: machine,
                   ),
                 );
