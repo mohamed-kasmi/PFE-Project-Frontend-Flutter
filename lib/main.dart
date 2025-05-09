@@ -11,7 +11,7 @@ import 'activity/rs_production/productionDashbord.dart';
 import 'activity/rs_planification/planification.dart';
 
 import 'activity/rs_production/dashboard.dart';
-
+import 'activity/rs_production/dashboard.dart';
 import 'activity/rs_production/Stop.dart';
 import 'testpubmqtt.dart';
 
@@ -51,7 +51,7 @@ void main() {
       }
       switch (settings.name) {
         case '/':
-          return MaterialPageRoute(builder: (context) => HomePage ());
+          return MaterialPageRoute(builder: (context) => PlanificationPage ());
         case '/login':
           return MaterialPageRoute(builder: (context) => Login());
         case '/users':

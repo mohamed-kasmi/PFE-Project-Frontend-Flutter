@@ -86,7 +86,7 @@ Widget build(BuildContext context) {
                                           ),
                                           BarChartGroupData(
                                                 x: 3,
-                                                barRods: [
+                                                barRods: data.toDo <= 0 ? [] : [
                                                       BarChartRodData(
                                                             toY: data.toDo.toDouble(),
                                                             color: Colors.blue,

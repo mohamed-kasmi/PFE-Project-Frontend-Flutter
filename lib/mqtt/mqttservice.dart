@@ -14,7 +14,7 @@ class MqttService {
   final List<String> _topics = ['testtopic', 'testtopic2','testtopic3'];
   MqttService() {
 
-    const broker = '192.168.1.14';
+    const broker = '192.168.82.101';
     const port = 9001;
     final clientId = 'Client_${DateTime.now().millisecondsSinceEpoch}';
 
@@ -52,6 +52,8 @@ class MqttService {
           try {
             final jsonData = jsonDecode(payload);
             _messages.add({'topic': topic, 'data': jsonData});
+            if(_messages.reversed==""){
+            }
             _controller.add(List.from(_messages.reversed));
             print("Received from $topic: $jsonData");
           } catch (e) {

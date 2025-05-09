@@ -117,8 +117,8 @@ class _ProductionDashboardState extends State<ProductionDashboard> {
                         title: 'Production',
                         labels: ['Bon', 'Rejet'],
                         values: [
-                          ((_currentMachine!.bon/_currentMachine!.qtPlanifier)*100).toDouble(),
-                          ((_currentMachine!.reject/_currentMachine!.qtPlanifier)*100).toDouble(),
+                          ((_currentMachine!.bon/(_currentMachine!.bon+_currentMachine!.reject))*100).toDouble(),
+                          ((_currentMachine!.reject/(_currentMachine!.bon+_currentMachine!.reject))*100).toDouble(),
                         ],
                       ),
                     ),

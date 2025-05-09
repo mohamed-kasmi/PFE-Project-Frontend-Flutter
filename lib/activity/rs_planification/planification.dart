@@ -2,189 +2,210 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:excel/excel.dart';
 import 'dart:typed_data';
-import 'dart:io';
-
-import 'package:path_provider/path_provider.dart';
+import '../../models/planificationData.dart';
+import '../../api/planificationApi.dart';
+import '../../provider/planification_function/planification_buttons.dart';
+import '../../provider/planification_function/planification_table.dart';
+import '../../widget/side_bar.dart';
 
 class PlanificationPage extends StatefulWidget {
   @override
   _PlanificationPageState createState() => _PlanificationPageState();
 }
+
 class _PlanificationPageState extends State<PlanificationPage> {
-  List<List<String>> rows = [];
-  List<List<TextEditingController>> controllers = [];
+  bool _isValidWorkCenter(String value) {
+    final regex = RegExp(r'^[A-Z][0-9]{2}$');
+    return regex.hasMatch(value);
+  }
+
+  List<List<String>> table = [];
+  List<List<TextEditingController?>> controllers = [];
   bool isLoading = false;
-  int? editingRow;
-  int? editingCol;
+
+  final List<String> targetHeaders = [
+    'Shop Order No',
+    'Part No',
+    'Part Description',
+    'Revised Order Qty',
+    'Remaining Qty',
+    'Planned Start Date',
+    'Planned Finish Date',
+    'Work Center',
+    'Remaining Mfg Hours',
+    'Cycle Time',
+  ];
+
   Future<void> _pickFile() async {
-    setState(() {
-      isLoading = true;
-    });
+    setState(() => isLoading = true);
+
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['xlsx']);
-      if (result != null) {
-        var bytes = result.files.single.bytes;
-        if (bytes != null) {
-          var excel = Excel.decodeBytes(Uint8List.fromList(bytes));
-          var sheet = excel.tables.values.first;
-          if (sheet != null) {
-            setState(() {
-              rows = [];
-              controllers = [];
-              for (var row in sheet.rows) {
-                List<String> rowData = List<String>.from(row.map((cell) => cell?.value.toString() ?? ''));
-                rows.add(rowData);
-                List<TextEditingController> rowControllers = rowData.map((data) {
-                  return TextEditingController(text: data);
-                }).toList();
-                controllers.add(rowControllers);
-              }
-            });
-          }
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['xlsx'],
+      );
+
+      if (result != null && result.files.single.bytes != null) {
+        var bytes = result.files.single.bytes!;
+        var excel = Excel.decodeBytes(Uint8List.fromList(bytes));
+        var sheet = excel.tables.values.first;
+
+        List<int> selectedColumns = [0, 3, 6, 7, 8, 9, 10, 13];
+        int editableColumnIndex = 6;
+
+        List<List<String>> tempTable = [];
+        List<List<TextEditingController?>> tempControllers = [];
+
+        for (var row in sheet.rows) {
+          List<String> rowData = selectedColumns
+              .map((index) => index < row.length ? row[index]?.value.toString() ?? '' : '')
+              .toList();
+          tempTable.add(rowData);
+
+          tempControllers.add(List.generate(
+            rowData.length,
+                (index) => index == editableColumnIndex ? TextEditingController(text: rowData[index]) : null,
+          ));
         }
+
+        setState(() {
+          table = tempTable;
+          controllers = tempControllers;
+        });
       }
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      setState(() => isLoading = false);
     }
   }
-  void _resetData() {
+
+  void _resetTable() {
     setState(() {
-      rows.clear();
+      table.clear();
       controllers.clear();
     });
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Data reset successfully!')));
   }
-  Future<void> _saveData() async {
-    var excel = Excel.createExcel();
-    Sheet sheet = excel['Sheet1'];
-    for (int i = 0; i < rows.length; i++) {
-      sheet.appendRow(rows[i]);
+
+  Future<void> _saveRows() async {
+    if (table.length <= 1) return;
+
+    List<String> headers = table.first;
+    List<PlanificationData> dataList = [];
+
+    for (int i = 1; i < table.length; i++) {
+      Map<String, String> rowMap = {};
+      for (int j = 0; j < headers.length; j++) {
+        rowMap[headers[j]] = controllers[i][j]?.text ?? table[i][j];
+      }
+
+      String workCenter = rowMap['Work Center'] ?? '';
+      if (!_isValidWorkCenter(workCenter)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Invalid Work Center in row ${i}: must be 1 letter + 2 digits")),
+        );
+        return;
+      }
+
+      try {
+        double remainingHours = double.tryParse(rowMap['Remaining Mfg Hours'] ?? '') ?? 0;
+        int remainingQty = int.tryParse(rowMap['Remaining Qty'] ?? '') ?? 1;
+        double cycleTime = remainingQty != 0 ? ((remainingHours * 3600) / remainingQty) : 0;
+
+        final data = PlanificationData(
+          workcenter: workCenter,
+          shopOrderNo: int.tryParse(rowMap['Shop Order No'] ?? '') ?? 0,
+          partNo: rowMap['Part No'] ?? '',
+          startDate: DateTime.tryParse(rowMap['Planned Start Date'] ?? '') ?? DateTime.now(),
+          finishDate: DateTime.tryParse(rowMap['Planned Finish Date'] ?? '') ?? DateTime.now(),
+          orderQty: int.tryParse(rowMap['Revised Order Qty'] ?? '') ?? 0,
+          remainQty: remainingQty,
+          remainingHours: remainingHours,
+          cycleTime: double.parse(cycleTime.toStringAsFixed(3)),
+        );
+        dataList.add(data);
+      } catch (e) {
+        debugPrint("Invalid row $i: $e");
+      }
     }
-    final directory = await getApplicationDocumentsDirectory();
-    String path = '${directory.path}/modified_excel.xlsx';
-    File(path)..writeAsBytesSync(excel.encode()!);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Data saved to $path')));
+
+    try {
+      bool result = await PlanificationApi.sendPlanifications(dataList);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result ? "All rows sent to backend" : "Failed to send data")),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error sending data: $e")),
+      );
+    }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blue[900],
+      drawer: SideBar(),
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Planification', style: TextStyle(fontWeight: FontWeight.bold)),
-        centerTitle: true,
-        elevation: 4,
-      ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildButtonRow(),
-            const SizedBox(height: 20),
-            rows.isNotEmpty
-                ? _buildDataTable()
-                : const Center(
-                  child: Text(
-                  'No data loaded. Please pick an Excel file.',
-                    style: TextStyle(fontSize: 16),
-                  ),
-              ),
-          ],
+        backgroundColor: Colors.blue[900],
+        elevation: 0,
+        title: const Text(
+          'Planification',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22),
         ),
+        centerTitle: true,
       ),
-    );
-  }
-  Widget _buildButtonRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _actionButton(Icons.file_open, 'Pick File', _pickFile, Colors.blue),
-        _actionButton(Icons.save_alt, 'Save', _saveData, Colors.green),
-        _actionButton(Icons.refresh, 'Reset', _resetData, Colors.red),
-      ],
-    );
-  }
-  Widget _actionButton(IconData icon, String label, VoidCallback onPressed, Color color) {
-    return ElevatedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon, size: 20),
-      label: Text(label),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    );
-  }
-  Widget _buildDataTable() {
-    return Scrollbar(
-      thumbVisibility: true,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: DataTable(
-            headingRowColor: MaterialStateProperty.all(Colors.blue.shade100),
-            dataRowColor: MaterialStateProperty.all(Colors.blueGrey.shade50),
-            columns: rows.isNotEmpty
-                ? List.generate(
-              rows[0].length,
-                  (index) => DataColumn(
-                label: Text(
-                  rows[0][index],
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ): [],
-            rows: List.generate(
-              rows.length - 1,
-                  (rowIndex) {
-                final dataRow = rows[rowIndex + 1];
-                return DataRow(
-                  cells: List.generate(
-                    dataRow.length,
-                        (cellIndex) {
-                      bool isEditing = editingRow == rowIndex && editingCol == cellIndex;
-                      return DataCell(
-                        isEditing
-                            ? TextField(
-                          autofocus: true,
-                          controller: TextEditingController(text: dataRow[cellIndex]),
-                          onSubmitted: (value) {
-                            setState(() {
-                              rows[rowIndex + 1][cellIndex] = value;
-                              editingRow = null;
-                              editingCol = null;
-                            });
-                          },
-                          onEditingComplete: () {
-                            setState(() {
-                              editingRow = null;
-                              editingCol = null;
-                            });
-                          },
-                        )
-                            : GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              editingRow = rowIndex;
-                              editingCol = cellIndex;
-                            });
-                          },
-                          child: Text(
-                            dataRow[cellIndex],
-                            style: const TextStyle(fontSize: 14),
-                          ),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/background.jpg'),
+            fit: BoxFit.cover,
+            opacity: 1, // You can adjust the opacity here to blend with the gradient
+          ),
+          gradient: const LinearGradient(
+            colors: [Color(0xFFE0ECFF), Color(0xFFBBD3FF)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Column(
+              children: [
+                // Buttons
+                  Card(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      elevation: 6,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                        child: PlanificationButtons(
+                          onPickFile: _pickFile,
+                          onReset: _resetTable,
+                          onSave: _saveRows,
+                          onPublish: () {}, // to be implemented
                         ),
-                      );
-                    },
+                      ),
+                    ),
+                const SizedBox(height: 20),
+                // Table
+                Expanded(
+                  child: Card(
+                    elevation: 10,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: PlanificationTable(
+                        table: table,
+                        controllers: controllers,
+                        isValidWorkCenter: _isValidWorkCenter,
+                        onChanged: () => setState(() {}),
+                      ),
+                    ),
                   ),
-                );
-              },
+                ),
+              ],
             ),
           ),
         ),

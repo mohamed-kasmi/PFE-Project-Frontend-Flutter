@@ -95,89 +95,89 @@ class _DashboardPageState extends State<DashboardPage> {
                 bool isMobile = constraints.maxWidth < 600;
                 return isMobile
                     ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    DateSelectorWidget(
-                      startDate: startDate,
-                      endDate: endDate,
-                      onDateSelected: (date, isStartDate) => _selectDate(date, isStartDate),
-                    ),
-                    SizedBox(height: 10),
-                    MachineDropdownWidget(
-                      machineList: machineList,
-                      selectedMachine: selectedMachine,
-                      onChanged: (value) => setState(() => selectedMachine = value),
-                    ),
-                    SizedBox(height: 10),
-                    GranularityDropdownWidget(
-                      granularityOptions: granularityList,
-                      selectedGranularity: selectedGranularity,
-                      onChanged: (value) => setState(() => selectedGranularity = value),
-                    ),
-                    SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: _fetchMachineData,
-                      child: Text("Submit"),
-                    ),
-                  ],
-                )
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        DateSelectorWidget(
+                          startDate: startDate,
+                          endDate: endDate,
+                          onDateSelected: (date, isStartDate) => _selectDate(date, isStartDate),
+                        ),
+                        SizedBox(height: 10),
+                        MachineDropdownWidget(
+                          machineList: machineList,
+                          selectedMachine: selectedMachine,
+                          onChanged: (value) => setState(() => selectedMachine = value),
+                        ),
+                        SizedBox(height: 10),
+                        GranularityDropdownWidget(
+                          granularityOptions: granularityList,
+                          selectedGranularity: selectedGranularity,
+                          onChanged: (value) => setState(() => selectedGranularity = value),
+                        ),
+                        SizedBox(height: 10),
+                        ElevatedButton(
+                          onPressed: _fetchMachineData,
+                          child: Text("Submit"),
+                        ),
+                      ],
+                    )
                     : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: DateSelectorWidget(
-                        startDate: startDate,
-                        endDate: endDate,
-                        onDateSelected: (date, isStartDate) => _selectDate(date, isStartDate),
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: MachineDropdownWidget(
-                        machineList: machineList,
-                        selectedMachine: selectedMachine,
-                        onChanged: (value) => setState(() => selectedMachine = value),
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: GranularityDropdownWidget(
-                        granularityOptions: granularityList,
-                        selectedGranularity: selectedGranularity,
-                        onChanged: (value) => setState(() => selectedGranularity = value),
-                      ),
-                    ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: _fetchMachineData,
-                        child: Text("Submit"),
-                      ),
-                    ),
-                  ],
-                );
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: DateSelectorWidget(
+                              startDate: startDate,
+                              endDate: endDate,
+                              onDateSelected: (date, isStartDate) => _selectDate(date, isStartDate),
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: MachineDropdownWidget(
+                              machineList: machineList,
+                              selectedMachine: selectedMachine,
+                              onChanged: (value) => setState(() => selectedMachine = value),
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: GranularityDropdownWidget(
+                              granularityOptions: granularityList,
+                              selectedGranularity: selectedGranularity,
+                              onChanged: (value) => setState(() => selectedGranularity = value),
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: _fetchMachineData,
+                              child: Text("Submit"),
+                            ),
+                          ),
+                        ],
+                      );
               },
             ),
             machineDataList.isNotEmpty
                 ? Column(
-              children: [
-                SizedBox(height: 30),
-                CombinedChartWidget(data: machineDataList, maxY: maxQuantity),
-                SizedBox(height: 30),
-                RuntimeChartWidget(data: machineDataList, maxY: maxRuntime),
-                SizedBox(height: 30),
-                ProductionTableWidget(data: machineDataList),
-              ],
-            )
+                  children: [
+                      SizedBox(height: 30),
+                      CombinedChartWidget(data: machineDataList, maxY: maxQuantity),
+                      SizedBox(height: 30),
+                      RuntimeChartWidget(data: machineDataList, maxY: maxRuntime),
+                      SizedBox(height: 30),
+                      ProductionTableWidget(data: machineDataList),
+                    ],
+                )
                 : Padding(
-              padding: const EdgeInsets.only(top: 30.0),
-              child: Center(
-                child: Text(
-                  "Submit your search.",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  padding: const EdgeInsets.only(top: 30.0),
+                  child: Center(
+                    child: Text(
+                      "Submit your search.",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                    ),
+                  ),
                 ),
-              ),
-            ),
           ],
         ),
       ),
