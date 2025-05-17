@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 class Apiuser {
-  static const String baseurl='http://192.168.1.14:8000/auth';
+  static const String baseurl='http://127.0.0.1:8000/auth';
   static Future<bool> auth(String email, String password) async{
     try{
       final response = await http.post(Uri.parse('$baseurl/login/'),
@@ -12,11 +12,13 @@ class Apiuser {
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        String token = data['token'];
+        String refresh = data['refresh'];
+        String access = data['access'];
         String email = data['email'];
         String role = data['role'];
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', token);
+        await prefs.setString('refreshT', refresh);
+        await prefs.setString('accessT', access);
         await prefs.setString('email', email);
         await prefs.setString('role', role);
         print("Login successful!");
