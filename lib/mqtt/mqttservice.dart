@@ -18,7 +18,8 @@ class MqttService {
 
   MqttService() {
 
-    const broker = '192.168.81.15';
+
+    const broker = '192.168.1.14';
     const port = 9001;
     final clientId = 'Client_${DateTime.now().millisecondsSinceEpoch}';
 

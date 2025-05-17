@@ -1,29 +1,45 @@
+import 'package:flutter/foundation.dart'; // for kIsWeb
 import 'package:flutter/material.dart';
 import '../../../models/machine.dart';
-import '../../activity/rs_production/productionDashbord.dart';
+import '../../mqtt/mqttservice.dart';
+import 'dart:convert';
 
 void showStopDialog(BuildContext context, Machine machine) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
       title: Text("Arrêter ${machine.topic.replaceAll("testtopic", "PRESS ")}"),
-      content: Text("Voulez-vous arrêter cette machine ?"),
+      content: kIsWeb
+          ? const Text("Voulez-vous arrêter cette machine ?") // Web version
+          : LayoutBuilder(
+        builder: (context, constraints) {
+          return ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width > 600 ? 400 : double.infinity,
+            ),
+            child: const Text("Do you want to stop this machine?"), // Android version
+          );
+        },
+      ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text("Annuler"),
+          child: const Text("Cancel"),
         ),
-
         ElevatedButton(
           onPressed: () {
             Navigator.of(context).pop();
+            final payload = {
+              "command": "stop",
+              "machine": machine.topic.replaceAll("testtopic", "misk01"),
+            };
+            MqttService().publishMsg(machine.topic, payload);
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Machine arrêtée")),
+              const SnackBar(content: Text("Machine stopped")),
             );
-            // Add stop logic here if needed
           },
           style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-          child: Text("STOP"),
+          child: const Text("STOP"),
         ),
       ],
     ),

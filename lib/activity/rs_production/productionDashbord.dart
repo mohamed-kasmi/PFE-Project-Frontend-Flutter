@@ -42,7 +42,7 @@ class _ProductionDashboardState extends State<ProductionDashboard> {
       });
     });
 
-    _mqttService.connect();
+    _mqttService.SubscribeMsg();
   }
   @override
   void dispose() {
@@ -63,31 +63,35 @@ class _ProductionDashboardState extends State<ProductionDashboard> {
       body: _currentMachine == null
           ? const Center(child: CircularProgressIndicator())
           : Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/background.jpg"),
-                  fit: BoxFit.cover,
-                  ),
-                ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildHeader(),
-                    const SizedBox(height: 16),
-                    _buildMainContent(),
-                    const SizedBox(height: 16),
-                    _buildFooter(),
-                ],
-              ),
-            ),
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/background.jpg"),
+            fit: BoxFit.cover,
           ),
-       );
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(),
+              const SizedBox(height: 16),
+              Expanded(  // ✅ This is the key fix
+                child: _buildMainContent(),
+              ),
+              const SizedBox(height: 16),
+              _buildFooter(),
+            ],
+          ),
+        ),
+      ),
+
+
+    );
   }
   Widget _buildHeader() {
     return Text(
-        'TRS en temps réel: ${(_currentMachine!.oee).toStringAsFixed(1)}%',
+        'Real-time OEE: ${(_currentMachine!.oee).toStringAsFixed(1)}%',
           style: const TextStyle(
           color: Colors.white,
           fontSize: 22,
@@ -97,82 +101,118 @@ class _ProductionDashboardState extends State<ProductionDashboard> {
   }
   Widget _buildMainContent() {
     return Expanded(
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: ProductionBarChart(
-              data: _currentMachine!,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            flex: 2,
-            child: Column(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          bool isWide = constraints.maxWidth > 800;
+          if (isWide) {
+            // Desktop or Tablet Layout
+            return Row(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: ProductionPieChart(
-                        title: 'Production',
-                        labels: ['Bon', 'Rejet'],
-                        values: [
-                          ((_currentMachine!.bon/_currentMachine!.qtPlanifier)*100).toDouble(),
-                          ((_currentMachine!.reject/_currentMachine!.qtPlanifier)*100).toDouble(),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: TRSGaugeWidget(
-                        trsValue: _currentMachine!.oee,
-                      ),
-                    ),
-                  ],
+                Expanded(
+                  flex: 2,
+                  child: ProductionBarChart(data: _currentMachine!),
                 ),
-                const SizedBox(height: 60),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    StopButtonWidget(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Confirmation'),
-                              content: const Text('Are you sure you want to stop?'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.red,
-                                  ),
-                                  child: const Text('Yes'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ],
+                const SizedBox(width: 16),
+                Expanded(
+                  flex: 2,
+                  child: _buildRightPanel(),
                 ),
               ],
-            ),
-          ),
-        ],
+            );
+          } else {
+            // Mobile Layout (Vertical Stack)
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  ProductionBarChart(data: _currentMachine!),
+                  const SizedBox(height: 16),
+                  _buildRightPanel(),
+                ],
+              ),
+            );
+          }
+        },
       ),
     );
   }
+  Widget _buildRightPanel() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: ProductionPieChart(
+                title: 'Production',
+                labels: ['Good', 'Rejected'],
+                values: [
+                  ((_currentMachine!.bon /
+                      (_currentMachine!.bon + _currentMachine!.reject)) *
+                      100)
+                      .toDouble(),
+                  ((_currentMachine!.reject /
+                      (_currentMachine!.bon + _currentMachine!.reject)) *
+                      100)
+                      .toDouble(),
+                ],
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: TRSGaugeWidget(
+                trsValue: _currentMachine!.oee,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 30),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            StopButtonWidget(
+              onPressed: () => _showStopConfirmationDialog(),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+  void _showStopConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation'),
+          content: const Text('Are you sure you want to stop?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                _mqttService.publishMsg(
+                  "testtopic/commande/${_currentMachine!.topic}",
+                  {
+                    "command": "stop",
+                    "machine": _currentMachine!.topic,
+                  },
+                );
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('STOP command sent')),
+                );
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red,
+              ),
+              child: const Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildFooter() {
     return Column(
       children: [

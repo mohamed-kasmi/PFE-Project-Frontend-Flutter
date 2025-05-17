@@ -6,10 +6,10 @@ import 'activity/auth/reset.dart';
 import 'activity/auth/setpassword.dart';
 import 'activity/s_administrateur/users.dart';
 import 'activity/s_administrateur/ajout.dart';
-import 'activity/screen/dashboard.dart';
 import 'activity/rs_production/productionDashbord.dart';
 import 'activity/rs_planification/planification.dart';
 import 'activity/rs_production/dashboard.dart';
+
 import 'activity/rs_production/Stop.dart';
 import 'firebase/firebase_initializer.dart';
 
@@ -52,6 +52,7 @@ void main()  async {
       switch (settings.name) {
         case '/':
           return MaterialPageRoute(builder: (context) => HomePage ());
+
         case '/login':
           return MaterialPageRoute(builder: (context) => Login());
         case '/users':

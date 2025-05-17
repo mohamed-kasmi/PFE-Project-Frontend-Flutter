@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 class StopButtonWidget extends StatelessWidget {
@@ -7,11 +8,15 @@ class StopButtonWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isWeb = kIsWeb;
+    final double width = isWeb ? 220 : MediaQuery.of(context).size.width < 400 ? MediaQuery.of(context).size.width * 0.7 : 220;
+    final double height = isWeb ? 160 : MediaQuery.of(context).size.width < 400 ? 120 : 160;
+    final double borderRadius = isWeb ? 3 : 6;
+
     return Container(
-      width: 220,
-      height: 160,
+      width: width,
+      height: height,
       decoration: BoxDecoration(
-        shape: BoxShape.rectangle,
         boxShadow: [
           BoxShadow(
             color: Colors.red.withOpacity(0.3),
@@ -24,19 +29,31 @@ class StopButtonWidget extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.red,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(3),
+            borderRadius: BorderRadius.circular(borderRadius),
           ),
           padding: const EdgeInsets.all(20),
           elevation: 8,
         ),
         onPressed: onPressed,
-        child: const Text(
+        child: isWeb
+            ? const Text(
           'STOP',
           style: TextStyle(
             fontSize: 30,
             fontWeight: FontWeight.bold,
             color: Colors.white,
             letterSpacing: 2,
+          ),
+        )
+            : const FittedBox(
+          child: Text(
+            'STOP',
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              letterSpacing: 2,
+            ),
           ),
         ),
       ),

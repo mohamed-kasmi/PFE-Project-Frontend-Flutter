@@ -14,7 +14,7 @@ class _StopPageState extends State<StopPage> {
   late MqttService _mqttService;
   List<Machine> _machines = [];
 
-  final List<String> _machineTopics = ['testtopic', 'testtopic2', 'testtopic3'];
+  final List<String> _machineTopics = ['misk01','misk02','bilher03'];
 
   @override
   void initState() {
@@ -25,7 +25,7 @@ class _StopPageState extends State<StopPage> {
         _machines = data;
       });
     });
-    _mqttService.connect();
+    _mqttService.SubscribeMsg();
   }
 
   @override
