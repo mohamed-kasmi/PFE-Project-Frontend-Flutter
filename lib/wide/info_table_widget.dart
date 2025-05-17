@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart'; // for kIsWeb
 import 'package:flutter/material.dart';
 import 'package:pdcs_frontend/models/machine.dart';
 
@@ -8,7 +9,9 @@ class InfoTableWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final content = Card(
       elevation: 10,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
@@ -17,7 +20,7 @@ class InfoTableWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Détails de la Machine',
+              'Machine Details',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -25,15 +28,28 @@ class InfoTableWidget extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            _buildInfoRow(Icons.speed, 'TRS en temps réel', '${data.oee.toStringAsFixed(1)}%'),
-            _buildInfoRow(Icons.access_time, 'Temps', data.time),
+            _buildInfoRow(Icons.speed, 'Real-time OEE', '${data.oee.toStringAsFixed(1)}%'),
+            _buildInfoRow(Icons.access_time, 'Time', data.time),
             _buildInfoRow(Icons.timer, 'Cycle Time (s)', data.cycleTime.toStringAsFixed(2)),
-            _buildInfoRow(Icons.check_circle, 'Total produit', data.total.toString()),
-            _buildInfoRow(Icons.assignment, 'À faire', data.toDo.toString()),
+            _buildInfoRow(Icons.check_circle, 'Total Produced', data.total.toString()),
+            _buildInfoRow(Icons.assignment, 'To DO', data.toDo.toString()),
           ],
         ),
       ),
     );
+
+    if (kIsWeb) {
+      // Web version: no layout constraint
+      return content;
+    } else {
+      // Android version: constrain width and allow scroll
+      return Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: screenWidth < 600 ? double.infinity : 500),
+          child: SingleChildScrollView(child: content),
+        ),
+      );
+    }
   }
 
   Widget _buildInfoRow(IconData icon, String label, String value) {

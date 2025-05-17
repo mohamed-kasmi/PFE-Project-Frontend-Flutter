@@ -5,7 +5,6 @@ import '../mqtt/machinestream.dart';
 import '../models/machine.dart';
 import '../widget/side_bar.dart';
 
-
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -14,8 +13,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late MqttService _mqttService;
   List<Machine> _machines = [];
-
-  final List<String> _machineTopics = ['testtopic', 'testtopic2', 'testtopic3'];
+  final List<String> _machineTopics = [
+    'misk01', 'misk02', 'misk03', 'misk04',
+    'misk05', 'misk06', 'misk07', 'misk08',
+    'misk09','misk10',
+  ];
 
   @override
   void initState() {
@@ -28,7 +30,7 @@ class _HomePageState extends State<HomePage> {
       });
     });
 
-    _mqttService.connect();
+    _mqttService.SubscribeMsg();
   }
 
   @override
@@ -39,58 +41,74 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blue[900],
-      drawer: SideBar(),
-      appBar: AppBar(
-        title: Text("Home",style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.blue[900],
-        elevation: 0,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: Icon(Icons.menu, color: Colors.white),
-            onPressed: () => Scaffold.of(context).openDrawer(),
+    return Stack(
+      children: [
+        // 🔹 Background Image covers the full screen
+        Positioned.fill(
+          child: Image.asset(
+            'assets/background.jpg',
+            fit: BoxFit.cover,
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(11),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            double screenWidth = constraints.maxWidth;
-            double cardWidth = 400;
-            int cardsPerRow = (screenWidth / cardWidth).floor().clamp(1, 4);
-            return Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: _machineTopics.map((topic) {
-                final machine = _machines.firstWhere(
-                      (m) => m.topic == topic,
-                  orElse: () => Machine(
-                    topic: topic,
-                    time: '',
-                    qtPlanifier: 0,
-                    bon: 0,
-                    reject: 0,
-                    toDo: 0,
-                    total: 0,
-                    oee: 0.0,
-                    cycleTime: 0.0,
-                  ),
-                );
 
-                return SizedBox(
-                  width: (screenWidth - (cardsPerRow - 1) * 12) / cardsPerRow,
-                  child: MachineCard(
-                    machineName: topic.replaceAll("testtopic", "PRESS "),
-                    machine: machine,
-                  ),
+        // 🔹 The main content above the background
+        Scaffold(
+          backgroundColor: Colors.transparent, // Important to show background
+          drawer: SideBar(),
+          appBar: AppBar(
+            title: const Text("Home", style: TextStyle(color: Colors.white)),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: Builder(
+              builder: (context) => IconButton(
+                icon: const Icon(Icons.menu, color: Colors.white),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+              ),
+            ),
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(11),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                double screenWidth = constraints.maxWidth;
+                double cardWidth = 400;
+                int cardsPerRow =
+                (screenWidth / cardWidth).floor().clamp(1, 4);
+                return Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: _machineTopics.map((topic) {
+                    final machine = _machines.firstWhere(
+                          (m) => m.topic == topic,
+                      orElse: () => Machine(
+                        topic: topic,
+                        time: '',
+                        qtPlanifier: 0,
+                        bon: 0,
+                        reject: 0,
+                        toDo: 0,
+                        total: 0,
+                        oee: 0.0,
+                        cycleTime: 0.0,
+                        status: 'offline',
+                      ),
+                    );
+
+                    return SizedBox(
+                      width:
+                      (screenWidth - (cardsPerRow - 1) * 12) / cardsPerRow,
+                      child: MachineCard(
+                        machineName: topic.replaceAll("misk", "Misk "),
+                        machine: machine,
+                      ),
+                    );
+                  }).toList(),
                 );
-              }).toList(),
-            );
-          },
+              },
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

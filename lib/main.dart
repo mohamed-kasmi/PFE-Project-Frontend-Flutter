@@ -6,14 +6,12 @@ import 'activity/auth/reset.dart';
 import 'activity/auth/setpassword.dart';
 import 'activity/s_administrateur/users.dart';
 import 'activity/s_administrateur/ajout.dart';
-import 'activity/screen/dashboard.dart';
 import 'activity/rs_production/productionDashbord.dart';
 import 'activity/rs_planification/planification.dart';
 
 import 'activity/rs_production/dashboard.dart';
 import 'activity/rs_production/dashboard.dart';
 import 'activity/rs_production/Stop.dart';
-import 'testpubmqtt.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -51,7 +49,7 @@ void main() {
       }
       switch (settings.name) {
         case '/':
-          return MaterialPageRoute(builder: (context) => PlanificationPage ());
+          return MaterialPageRoute(builder: (context) => UsersPage());
         case '/login':
           return MaterialPageRoute(builder: (context) => Login());
         case '/users':

@@ -16,8 +16,8 @@ class ProductionPieChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorMap = {
-      'Bon': Colors.green,
-      'Rejet': Colors.red,
+      'Good': Colors.green,
+      'Rejected': Colors.red,
     };
 
     return Card(
@@ -89,8 +89,8 @@ class ProductionPieChart extends StatelessWidget {
 
   Color _getColorForLabel(String label) {
     return {
-      'Bon': Colors.green,
-      'Rejet': Colors.red,
+      'Good': Colors.green,
+      'Rejected': Colors.red,
     }[label] ?? Colors.grey;
   }
 }
