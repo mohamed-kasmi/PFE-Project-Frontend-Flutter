@@ -5,7 +5,7 @@ import '../mqtt/machinestream.dart';
 import '../models/machine.dart';
 import '../widget/side_bar.dart';
 import '../widget/notifications.dart';
-import '../provider/SharedPreferences/shared_pref_service.dart';
+import '../widget/provider/SharedPreferences/shared_pref_service.dart';
 
 class HomePage extends StatefulWidget {
   @override

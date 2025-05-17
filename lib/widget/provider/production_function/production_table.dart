@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../models/machinedata.dart';
+import '../../../models/machinedata.dart';
 
 class ProductionTableWidget extends StatelessWidget {
   final List<MachineData> data;

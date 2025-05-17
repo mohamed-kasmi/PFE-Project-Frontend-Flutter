@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../models/machine.dart';
-import '../../activity/rs_production/productionDashbord.dart';
-import '../../mqtt/mqttservice.dart';
+import '../../../activity/rs_production/productionDashbord.dart';
+import '../../../mqtt/mqttservice.dart';
 
 void showStopDialog(BuildContext context, Machine machine) {
   final _mqttService = MqttService();

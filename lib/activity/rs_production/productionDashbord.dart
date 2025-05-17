@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../widget/side_bar.dart';
-import '../../wide/production_bar_chart.dart';
-import '../../wide/production_pie_chart.dart';
-import '../../wide/trs_gauge_widget.dart';
-import '../../wide/info_table_widget.dart';
-import '../../wide/stop_button_widget.dart';
+import '../../widget/provider/production_function/production_bar_chart.dart';
+import '../../widget/provider/production_function/production_pie_chart.dart';
+import '../../widget/provider/production_function/trs_gauge_widget.dart';
+import '../../widget/provider/production_function/info_table_widget.dart';
+import '../../widget/provider/production_function/stop_button_widget.dart';
 import '../../mqtt/mqttservice.dart';
 import '../../mqtt/machinestream.dart';
 import '../../models/machine.dart';

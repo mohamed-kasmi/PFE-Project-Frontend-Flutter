@@ -1,19 +1,16 @@
-import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../../models/machinedata.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+import '../../../models/machinedata.dart';
 import 'package:flutter/foundation.dart';
-
-class CombinedChartWidget extends StatelessWidget {
+import 'package:intl/intl.dart';
+class RuntimeChartWidget extends StatelessWidget {
   final List<MachineData> data;
   final double maxY;
-
-  const CombinedChartWidget({
+  const RuntimeChartWidget({
     super.key,
     required this.data,
     required this.maxY,
   });
-
   @override
   Widget build(BuildContext context) {
     final ScrollController _scrollController = ScrollController();
@@ -34,7 +31,7 @@ class CombinedChartWidget extends StatelessWidget {
                 controller: _scrollController,
                 child: Container(
                   width: chartWidth,
-                  child: _buildBarChart(),
+                  child: _buildRuntimeChart(maxY),
                 ),
               ),
             ),
@@ -43,20 +40,9 @@ class CombinedChartWidget extends StatelessWidget {
       ),
     );
   }
-  Widget _buildBarChart() {
-    Map<int, Color> partNoColors = {};
-    List<Color> availableColors = [
-      Colors.blue,
-      Colors.orange,
-      Colors.purple,
-      Colors.teal,
-      Colors.pink,
-      Colors.brown,
-      Colors.indigo,
-      Colors.cyan,
-    ];
-    int colorIndex = 0;
-    return Padding(
+  Widget _buildRuntimeChart(double maxY) {
+    return Container(
+      height: 400,
       padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,7 +50,7 @@ class CombinedChartWidget extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.only(left: 12.0, bottom: 8.0),
             child: Text(
-              'Quantity & OEE Dashboard',
+              'Runtime & Downtime Dashboard',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -74,23 +60,26 @@ class CombinedChartWidget extends StatelessWidget {
           Expanded(
             child: BarChart(
               BarChartData(
+                maxY: 10,
                 barGroups: data.asMap().entries.map((entry) {
+                  final index = entry.key;
                   final item = entry.value;
-                  final oee = item.oeeDay * 100;
-
-                  if (!partNoColors.containsKey(item.partNO)) {
-                    partNoColors[item.partNO] = availableColors[colorIndex % availableColors.length];
-                    colorIndex++;
-                  }
-                  final barColor = partNoColors[item.partNO]!;
-
+                  final runtime = item.runHoursDay;
+                  final downtime = item.downHoursDay;
+                  final total = runtime + downtime;
+                  final runtimePercent = total > 0 ? runtime / total : 0.0;
                   return BarChartGroupData(
-                    x: entry.key,
+                    x: index,
                     barRods: [
                       BarChartRodData(
-                        toY: item.goodQtyDay.toDouble(),
+                        toY: total,
                         width: 18,
-                        color: barColor,
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          stops: [0.0, runtimePercent, runtimePercent, 1.0],
+                          colors: [Colors.green, Colors.green, Colors.grey, Colors.grey],
+                        ),
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ],
@@ -98,26 +87,49 @@ class CombinedChartWidget extends StatelessWidget {
                 }).toList(),
                 titlesData: FlTitlesData(
                   bottomTitles: AxisTitles(sideTitles: _bottomTitles),
-                  leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 50)),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (value, meta) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Text(
+                            '${value.toInt()}H',
+                            textAlign: TextAlign.right,
+                          ),
+                        );
+                      },
+                      reservedSize: 50,
+                    ),
+                  ),
+
                   rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 ),
                 gridData: FlGridData(show: true),
                 borderData: FlBorderData(show: true),
                 alignment: BarChartAlignment.spaceEvenly,
-                minY: 0,
-                maxY: maxY,
                 barTouchData: BarTouchData(
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
                     tooltipBgColor: Colors.black87,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       final item = data[group.x.toInt()];
-                      final oee = (item.oeeDay * 100).toStringAsFixed(1);
-                      final qty = item.goodQtyDay;
-                      final partno = item.partNO;
+                      final RH = item.runHoursDay;
+                      final DH = item.downHoursDay;
+
+                      final runHours = RH.floor();
+                      final runMinutes = ((RH - runHours) * 60).round();
+
+                      final downHours = DH.floor();
+                      final downMinutes = ((DH - downHours) * 60).round();
+
+                      String formatTime(int hours, int minutes) =>
+                          '${hours.toString().padLeft(0, '0')}H : ${minutes.toString().padLeft(0, '0')}M';
+
                       return BarTooltipItem(
-                        'OEE: $oee%\nQuantity: $qty\nPart Number: $partno',
+                        'Run: ${formatTime(runHours, runMinutes)}\n'
+                            'Down: ${formatTime(downHours, downMinutes)}',
                         const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -189,4 +201,3 @@ class CombinedChartWidget extends StatelessWidget {
   );
 
 }
-

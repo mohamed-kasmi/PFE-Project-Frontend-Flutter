@@ -3,7 +3,7 @@ import '../../mqtt/machinestream.dart';
 import '../../mqtt/mqttservice.dart';
 import '../../models/machine.dart';
 import '../../widget/side_bar.dart';
-import '../../provider/production_function/machine_grid.dart';
+import '../../widget/provider/production_function/machine_grid.dart';
 
 class StopPage extends StatefulWidget {
   @override
