@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "624278702375",
+    "project_id": "pdcs-e2e3b",
+    "storage_bucket": "pdcs-e2e3b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:624278702375:android:9fde8210b67c8b47b3c102",
+        "android_client_info": {
+          "package_name": "com.example.pdcs_frontend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4hfccBE9HQBqb7KeJjtzH0O2oStnhKoc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

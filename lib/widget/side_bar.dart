@@ -33,15 +33,8 @@ class _SideBarState extends State<SideBar> {
 
   Future<void> _defaultRole() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-
-    await prefs.setString('role', '');
-    await prefs.setString('email', 'Log in!');
-
-    await _loadRole();
-
-    print("Reset Role: $_role");
-    print("Reset Email: $_email");
+    await prefs.remove('role');
+    await prefs.remove('email');
   }
 
 

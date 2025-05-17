@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import '../models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 class Apiuser {
-  static const String baseurl='http://127.0.0.1:8000/auth';
+  static const String baseurl='http://192.168.1.14:8000/auth';
   static Future<bool> auth(String email, String password) async{
     try{
       final response = await http.post(Uri.parse('$baseurl/login/'),

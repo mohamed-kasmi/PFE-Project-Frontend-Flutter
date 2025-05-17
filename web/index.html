@@ -35,5 +35,47 @@
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
+  <script type="module">
+
+    if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/firebase-messaging-sw.js', { scope: '/' })
+      .then(function(registration) {
+        console.log('Service Worker registered with scope:', registration.scope);
+      })
+      .catch(function(error) {
+        console.error('Service Worker registration failed:', error);
+      });
+  }
+
+    // Function to request permission for notifications and fetch token
+    async function requestPermission() {
+      try {
+        const status = await Notification.requestPermission();
+        if (status === 'granted') {
+          console.log("Notification permission granted.");
+          // Get the FCM token
+          const token = await getToken(messaging, {
+            vapidKey: 'BGRrvyvpbLQP03fFmOct9jmtqpiBKBHbdMHQQ1FHdvjDvAj6YxxispiGKlUsYByI0EhWyRV58hXRJXlHMaynjkQ', // Replace with your own VAPID key
+          });
+          console.log("FCM Token:", token);
+        } else {
+          console.log("Notification permission denied.");
+        }
+      } catch (error) {
+        console.error("Error getting FCM token:", error);
+      }
+    }
+
+    // Listen for click event on the button to request permission
+    document.getElementById('enableNotificationsBtn').addEventListener('click', () => {
+      requestPermission();
+    });
+
+    // Listen for incoming messages (for background messages)
+    onMessage(messaging, (payload) => {
+      console.log("Message received. ", payload);
+      // Handle the message here, e.g., display a notification
+    });
+  </script>
 </body>
 </html>

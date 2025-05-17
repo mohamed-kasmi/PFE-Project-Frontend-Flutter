@@ -1,9 +1,12 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import '../../widget/Login_Elements/LoginButtonWidget.dart';
 import '../../widget/side_bar.dart';
 import '../auth/Forget.dart';
 import '../../api/apiuser.dart';
 import '../home.dart';
+import '../../firebase/firebase_initializer.dart';
+import '../../api/apinotification.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -33,6 +36,15 @@ class _LoginState extends State<Login> {
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
         );
+        await FirebaseInitializer.initialize();
+        String? fcmToken = await FirebaseMessaging.instance.getToken();
+
+        if (fcmToken != null) {
+          await ApiNotification.sendFcmToken(fcmToken);
+        } else {
+          print("Failed to retrieve FCM token");
+        }
+
       } else {
         showSnackbar("Invalid email or password");
       }

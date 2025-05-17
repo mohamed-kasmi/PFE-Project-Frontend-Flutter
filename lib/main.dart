@@ -9,13 +9,13 @@ import 'activity/s_administrateur/ajout.dart';
 import 'activity/screen/dashboard.dart';
 import 'activity/rs_production/productionDashbord.dart';
 import 'activity/rs_planification/planification.dart';
-
 import 'activity/rs_production/dashboard.dart';
-
 import 'activity/rs_production/Stop.dart';
-import 'testpubmqtt.dart';
+import 'firebase/firebase_initializer.dart';
 
-void main() {
+void main()  async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     initialRoute: '/',
@@ -51,7 +51,7 @@ void main() {
       }
       switch (settings.name) {
         case '/':
-          return MaterialPageRoute(builder: (context) => PlanificationPage ());
+          return MaterialPageRoute(builder: (context) => HomePage ());
         case '/login':
           return MaterialPageRoute(builder: (context) => Login());
         case '/users':
