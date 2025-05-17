@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart'; // for kIsWeb
 import 'package:flutter/material.dart';
-import '../../../models/machine.dart';
-import '../../mqtt/mqttservice.dart';
+import '../../../../models/machine.dart';
+import '../../../mqtt/mqttservice.dart';
 import 'dart:convert';
 
 void showStopDialog(BuildContext context, Machine machine) {

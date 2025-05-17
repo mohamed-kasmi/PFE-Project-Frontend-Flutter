@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../provider/production_function/combined_chart.dart';
-import '../../provider/production_function/runtime_chart.dart';
-import '../../provider/production_function/production_table.dart';
-import '../../provider/production_function/date_selector.dart';
-import '../../provider/production_function/machine_dropdown.dart';
-import '../../provider/production_function/granularitydropdownwidget.dart';
+import '../../widget/provider/production_function/combined_chart.dart';
+import '../../widget/provider/production_function/runtime_chart.dart';
+import '../../widget/provider/production_function/production_table.dart';
+import '../../widget/provider/production_function/date_selector.dart';
+import '../../widget/provider/production_function/machine_dropdown.dart';
+import '../../widget/provider/production_function/granularitydropdownwidget.dart';
 import '../../models/machinedata.dart';
 import '../../api/apimachinedata.dart';
 import '../../widget/side_bar.dart';
