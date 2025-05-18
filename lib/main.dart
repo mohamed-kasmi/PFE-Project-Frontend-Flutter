@@ -51,7 +51,7 @@ void main()  async {
       }
       switch (settings.name) {
         case '/':
-          return MaterialPageRoute(builder: (context) => HomePage ());
+          return MaterialPageRoute(builder: (context) => StopPage ());
 
         case '/login':
           return MaterialPageRoute(builder: (context) => Login());

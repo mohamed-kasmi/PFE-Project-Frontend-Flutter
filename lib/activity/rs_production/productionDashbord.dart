@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pdcs_frontend/activity/rs_production/Stop.dart';
 
 import '../../widget/side_bar.dart';
 import '../../widget/provider/production_function/production_bar_chart.dart';
@@ -197,7 +198,12 @@ class _ProductionDashboardState extends State<ProductionDashboard> {
                     "machine": _currentMachine!.topic,
                   },
                 );
-                Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StopPage(),
+                  ),
+                );
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('STOP command sent')),
                 );
