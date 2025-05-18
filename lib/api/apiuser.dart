@@ -12,13 +12,11 @@ class Apiuser {
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        String refresh = data['refresh'];
-        String access = data['access'];
+
         String email = data['email'];
         String role = data['role'];
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('refreshT', refresh);
-        await prefs.setString('accessT', access);
+
         await prefs.setString('email', email);
         await prefs.setString('role', role);
         print("Login successful!");
@@ -33,29 +31,30 @@ class Apiuser {
       return false;
     }
   }
-  static Future<bool> forgotpass(String email) async{
-    try{
-      final response = await http.post(Uri.parse('$baseurl/forgot_password/'),
+  static Future<String?> forgotpass(String email) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseurl/forgot_password/'),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"email": email}),
       );
       if (response.statusCode == 200) {
-        print("mail sent ");
-        return true;
+        return email;
       } else {
-        print("not sent " );
-        return false;
+        return null;
       }
-    }catch(e){
+    } catch (e) {
       print("Error: $e");
-      return false;
+      return null;
     }
   }
-  static Future<bool> restpass(String token,String email,String password) async {
+
+
+  static Future<bool> restpass(String email,String password) async {
     try{
       final response =await http.put(Uri.parse('$baseurl/reset_password/'),
           headers: {"Content-Type": "application/json"},
-          body: jsonEncode({"token":token,"email":email,"password":password})
+          body: jsonEncode({"email":email,"password":password})
       );
       if (response.statusCode == 200) {
         print("password reset sucssefuly ");

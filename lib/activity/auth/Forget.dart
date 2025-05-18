@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../widget/TextFieldWidget.dart';
 import '../../widget/ButtonWidget.dart';
 import '../home.dart';
+import 'verification_code.dart';  // adjust the path if needed
+
 import '../../widget/side_bar.dart';
 import '../../api/apiuser.dart';
 class ForgotPasswordPage extends StatefulWidget {
@@ -12,22 +14,25 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   void _submitForm() async {
-    String email = emailController.text;
-    try {
-      bool response = await Apiuser.forgotpass(email);
-      if (response == true) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Password reset link sent to your email.')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Email does not exist.')),
-        );
-      }
-    } catch (e) {
-      print("$e");
+    String email = emailController.text.trim();
+    String? result = await Apiuser.forgotpass(email);
+
+    if (result != null) {
+      // Navigate to verification page with email passed
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => VerificationCodePage(email: result),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Email does not exist or error occurred.')),
+      );
     }
   }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
