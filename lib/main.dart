@@ -25,7 +25,7 @@ void main()  async {
         String? verificationId = uri.queryParameters['vid'];
         if (verificationId != null) {
           return MaterialPageRoute(
-            builder: (context) => ResetPasswordPage(verificationId: verificationId),
+            builder: (context) => ResetPasswordPage(),
           );
         } else {
           return MaterialPageRoute(

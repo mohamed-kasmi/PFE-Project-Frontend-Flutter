@@ -7,6 +7,7 @@ import '../../api/apiuser.dart';
 import '../home.dart';
 import '../../firebase/firebase_initializer.dart';
 import '../../api/apinotification.dart';
+import 'reset.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -30,21 +31,30 @@ class _LoginState extends State<Login> {
       isLoading = true;
     });
     try {
-      bool result = await Apiuser.auth(email, password);
-      if (result) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
-        await FirebaseInitializer.initialize();
-        String? fcmToken = await FirebaseMessaging.instance.getToken();
+      final result = await Apiuser.auth(email, password);
+      if (result['success'] == true) {
+        bool firstLogin = result['firstlogin'];
 
-        if (fcmToken != null) {
-          await ApiNotification.sendFcmToken(fcmToken);
+        if (firstLogin) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => ResetPasswordPage()),
+          );
         } else {
-          print("Failed to retrieve FCM token");
-        }
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+          );
+          await FirebaseInitializer.initialize();
+          String? fcmToken = await FirebaseMessaging.instance.getToken();
 
+          if (fcmToken != null) {
+            await ApiNotification.sendFcmToken(fcmToken);
+          } else {
+            print("Failed to retrieve FCM token");
+          }
+        }
+        
       } else {
         showSnackbar("Invalid email or password");
       }

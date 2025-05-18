@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import '../../widget/TextFieldWidget.dart';
 import '../../widget/ButtonWidget.dart';
 import '../../api/apiuser.dart';
+import '../../service/SharedPreferences/shared_pref_service.dart';
 
 class ResetPasswordPage extends StatefulWidget {
-  final String verificationId;
+  final String? email;
 
-  ResetPasswordPage({required this.verificationId}); // Accept parameters
-
+  ResetPasswordPage({this.email});
   @override
   _ResetPasswordPageState createState() => _ResetPasswordPageState();
 }
@@ -17,41 +17,34 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
   String? email;
-  String? token;
 
   bool _isNewPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
 
+
   @override
   void initState() {
     super.initState();
-    _loadVerificationData();
+    _loademail();
   }
 
-  Future<void> _loadVerificationData() async {
-    final result = await Apiuser.fetchTokenAndEmail(widget.verificationId);
-    if (result != null) {
-      setState(() {
-        email = result['email'];
-        token = result['token'];
-      });
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Invalid or expired verification link.")),
-      );
-    }
+  Future<void> _loademail() async {
+    String? storedEmail = await SharedPrefService.getEmail();
+    setState(() {
+      email = storedEmail;
+    });
   }
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      if (token == null || email == null) {
+      if (email == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Invalid reset link.")),
         );
         return;
       }
       try {
-        bool response = await Apiuser.restpass(token!, email!, _newPasswordController.text);
+        bool response = await Apiuser.restpass(email!, _newPasswordController.text);
         if (response == true) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Password has been reset successfully.')),
