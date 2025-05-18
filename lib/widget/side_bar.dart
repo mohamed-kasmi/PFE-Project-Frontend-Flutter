@@ -4,6 +4,7 @@ import 'package:pdcs_frontend/activity/s_administrateur/users.dart';
 import '../activity/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pdcs_frontend/activity/rs_production/dashboard.dart';
+import 'package:pdcs_frontend/activity/rs_production/Stop.dart';
 import 'package:pdcs_frontend/activity/rs_planification/planification.dart';
 
 class SideBar extends StatefulWidget {
@@ -35,6 +36,8 @@ class _SideBarState extends State<SideBar> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('role');
     await prefs.remove('email');
+    await prefs.remove('accessT');
+    await prefs.remove('refreshT');
   }
 
 
@@ -93,7 +96,7 @@ class _SideBarState extends State<SideBar> {
       ListTile(
         leading: Icon(Icons.stop),
         title: Text('Stop'),
-        onTap: () => Navigator.pop(context),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => StopPage())),
       ),
       ListTile(
         leading: Icon(Icons.next_plan),
@@ -151,7 +154,7 @@ class _SideBarState extends State<SideBar> {
       ListTile(
         leading: Icon(Icons.stop),
         title: Text('Stop'),
-        onTap: () => Navigator.pop(context),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => StopPage())),
       ),
       Divider(),
       ListTile(

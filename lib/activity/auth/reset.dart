@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import '../../widget/TextFieldWidget.dart';
 import '../../widget/ButtonWidget.dart';
 import '../../api/apiuser.dart';
+import '../../service/SharedPreferences/shared_pref_service.dart';
 
 import 'verification_code.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   final String? email;
+
 
   ResetPasswordPage({this.email, Key? key}) : super(key: key);
 
@@ -23,12 +25,25 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   bool _isNewPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
 
+
   @override
   void initState() {
     super.initState();
-      email = widget.email;
+    _loademail();
   }
 
+  Future<void> _loademail() async {
+    if (widget.email != null) {
+      setState(() {
+        email = widget.email;
+      });
+    } else {
+      String? storedEmail = await SharedPrefService.getEmail();
+      setState(() {
+        email = storedEmail;
+      });
+    }
+  }
 
 
   Future<void> _submitForm() async {
@@ -40,7 +55,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
         return;
       }
       try {
+
         bool response = await Apiuser.restpass( email!, _newPasswordController.text);
+
         if (response == true) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Password has been reset successfully.')),
