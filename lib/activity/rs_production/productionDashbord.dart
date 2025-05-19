@@ -209,11 +209,12 @@ class _ProductionDashboardState extends State<ProductionDashboard> {
             TextButton(
               onPressed: () {
                 _mqttService.publishMsg(
-                  "testtopic/commande/${_currentMachine!.topic}",
+                  "machine/commande/${_currentMachine!.topic}",
                   {
                     "command": "stop",
                     "machine": _currentMachine!.topic,
                   },
+                  false
                 );
                 Navigator.push(
                   context,
@@ -221,6 +222,7 @@ class _ProductionDashboardState extends State<ProductionDashboard> {
                     builder: (context) => StopPage(),
                   ),
                 );
+
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('STOP command sent')),
                 );

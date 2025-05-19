@@ -33,7 +33,7 @@ void showStopDialog(BuildContext context, Machine machine) {
               "command": "stop",
               "machine": machine.topic.replaceAll("testtopic", "misk01"),
             };
-            MqttService().publishMsg(machine.topic, payload);
+            MqttService().publishMsg(machine.topic, payload,false);
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("Machine stopped")),
             );

@@ -37,11 +37,12 @@ void showStopDialog(BuildContext context, Machine machine) {
           onPressed: () {
             Navigator.of(context).pop();
             _mqttService.publishMsg(
-              "testtopic/commande/${machine.topic}",
+              "machine/commande/${machine.topic}",
               {
                 "command": "stop",
                 "machine": machine.topic,
               },
+              false
             );
 
             ScaffoldMessenger.of(context).showSnackBar(

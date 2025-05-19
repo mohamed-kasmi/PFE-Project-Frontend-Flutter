@@ -120,11 +120,11 @@ class MqttService {
 
 
 
-  Future<void> publishMsg(String topic, dynamic payload) async {
+  Future<void> publishMsg(String topic, dynamic payload, bool retain) async {
     if (!_isConnected) await connect();
     final builder = MqttClientPayloadBuilder();
     builder.addUTF8String(jsonEncode(payload));
-    _client.publishMessage(topic, MqttQos.atLeastOnce, builder.payload!, retain: true);
+    _client.publishMessage(topic, MqttQos.atLeastOnce, builder.payload!, retain: retain);
     print('Message published to $topic: $payload');
   }
 

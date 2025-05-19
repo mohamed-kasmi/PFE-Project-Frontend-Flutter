@@ -215,7 +215,7 @@ class _PlanificationPageState extends State<PlanificationPage> {
       final dataList = entry.value;
 
       List<Map<String, dynamic>> jsonList = dataList.map((model) => model.toJson()).toList();
-      await MqttService().publishMsg(topic, jsonList);
+      await MqttService().publishMsg(topic, jsonList,true);
       print('Published ${dataList.length} rows to $topic');
     }
 
