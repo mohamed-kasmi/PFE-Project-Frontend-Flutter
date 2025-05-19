@@ -10,6 +10,7 @@ class Machine {
   final double oee;
   final double cycleTime;
   final String? status;
+  final bool stop;
 
   Machine({
     required this.topic,
@@ -22,6 +23,7 @@ class Machine {
     required this.oee,
     required this.cycleTime,
     this.status,
+    required this.stop,
   });
 
   factory Machine.fromJson(String topic, Map<String, dynamic> json) {
@@ -36,6 +38,7 @@ class Machine {
       oee: (json['OEE'] ?? 0).toDouble(),
       cycleTime: (json['cycle_time'] ?? 0).toDouble(),
       status: json['status'],
+      stop: json['stop'],
     );
   }
 }

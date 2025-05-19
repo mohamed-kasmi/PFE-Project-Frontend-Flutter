@@ -93,9 +93,30 @@ class MachineCard extends StatelessWidget {
                               ),
                             ),
                           ),
-
-
-
+                        ]else if(machine.stop)...[
+                          Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 20),
+                              child: RichText(
+                                text: TextSpan(
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: 'Status: ',
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                    TextSpan(
+                                      text: 'Machine Stoped by leader',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                         ] else ...[
                           CircularPercentIndicator(
                             radius: circleRadius,

@@ -107,6 +107,7 @@ class _HomePageState extends State<HomePage> {
                         oee: 0.0,
                         cycleTime: 0.0,
                         status: 'offline',
+                        stop: false,
                       ),
                     );
 

@@ -211,7 +211,7 @@ class _ProductionDashboardState extends State<ProductionDashboard> {
                 _mqttService.publishMsg(
                   "machine/commande/${_currentMachine!.topic}",
                   {
-                    "command": "stop",
+                    "stop": true,
                     "machine": _currentMachine!.topic,
                   },
                   false

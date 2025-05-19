@@ -39,7 +39,7 @@ void showStopDialog(BuildContext context, Machine machine) {
             _mqttService.publishMsg(
               "machine/commande/${machine.topic}",
               {
-                "command": "stop",
+                "stop": true,
                 "machine": machine.topic,
               },
               false
