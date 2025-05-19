@@ -3,6 +3,8 @@ import '../../api/apiuser.dart';
 import '../../models/user.dart';
 import 'ajout.dart';
 import '../../widget/side_bar.dart';
+import '../../service/SharedPreferences/shared_pref_service.dart';
+import '../../widget/notifications.dart';
 
 class UsersPage extends StatefulWidget {
   @override
@@ -11,11 +13,21 @@ class UsersPage extends StatefulWidget {
 
 class _UsersPageState extends State<UsersPage> {
   List<User> users = [];
+  String? userEmail;
 
   @override
   void initState() {
     super.initState();
     _loadUsers();
+    loadEmail();
+  }
+  Future<void> loadEmail() async {
+    final email = await SharedPrefService.getEmail();
+    if (email != null && email.isNotEmpty) {
+      setState(() {
+        userEmail = email;
+      });
+    }
   }
 
   Future<void> _loadUsers() async {
@@ -74,6 +86,13 @@ class _UsersPageState extends State<UsersPage> {
         ),
         backgroundColor: Colors.blue[900],
         iconTheme: IconThemeData(color: Colors.white),
+        actions:[
+          if (userEmail != null && userEmail!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: NotificationIcon(userEmail: userEmail!),
+            ),
+        ],
       ),
       body: Stack(
         fit: StackFit.expand,

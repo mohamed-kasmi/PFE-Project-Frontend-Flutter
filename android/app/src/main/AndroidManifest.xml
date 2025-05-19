@@ -1,11 +1,8 @@
-<<<<<<< HEAD
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-=======
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.pdcs_frontend">
-
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- Permissions -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <!-- WRITE_EXTERNAL_STORAGE is deprecated in API 30+ -->
@@ -15,7 +12,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
 
->>>>>>> 3b76f3910c093f8335fedd7dad5f0c18fb2f8202
+
     <application
         android:name="${applicationName}"
         android:label="pdcs_frontend"

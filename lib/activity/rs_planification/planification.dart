@@ -12,6 +12,8 @@ import '../../models/planificationmqtt.dart';
 import '../../service/storage_permission.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:io';
+import '../../service/SharedPreferences/shared_pref_service.dart';
+import '../../widget/notifications.dart';
 
 
 class PlanificationPage extends StatefulWidget {
@@ -23,6 +25,15 @@ class _PlanificationPageState extends State<PlanificationPage> {
   List<List<String>> table = [];
   List<List<TextEditingController?>> controllers = [];
   bool isLoading = false;
+  String? userEmail;
+
+
+  @override
+  void initState() {
+    setState(() {
+      loadEmail();
+    });
+  }
 
   final List<String> targetHeaders = [
     'Shop Order No',
@@ -110,7 +121,6 @@ class _PlanificationPageState extends State<PlanificationPage> {
       setState(() => isLoading = false);
     }
   }
-
 
 
   void _resetTable() {
@@ -213,6 +223,14 @@ class _PlanificationPageState extends State<PlanificationPage> {
       const SnackBar(content: Text("All rows published grouped by Work Center")),
     );
   }
+  Future<void> loadEmail() async {
+    final email = await SharedPrefService.getEmail();
+    if (email != null && email.isNotEmpty) {
+      setState(() {
+        userEmail = email;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -228,6 +246,13 @@ class _PlanificationPageState extends State<PlanificationPage> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22),
         ),
         centerTitle: true,
+        actions:[
+          if (userEmail != null && userEmail!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: NotificationIcon(userEmail: userEmail!),
+            ),
+        ],
       ),
       body: Container(
         decoration: BoxDecoration(

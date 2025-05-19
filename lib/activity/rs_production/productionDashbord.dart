@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pdcs_frontend/activity/rs_production/Stop.dart';
-
+import '../../service/SharedPreferences/shared_pref_service.dart';
+import '../../widget/notifications.dart';
 import '../../widget/side_bar.dart';
 import '../../widget/provider/production_function/production_bar_chart.dart';
 import '../../widget/provider/production_function/production_pie_chart.dart';
@@ -23,7 +24,7 @@ class ProductionDashboard extends StatefulWidget {
 }
 class _ProductionDashboardState extends State<ProductionDashboard> {
   late MqttService _mqttService;
-
+  String? userEmail;
   Machine? _currentMachine;
 
   @override
@@ -41,6 +42,7 @@ class _ProductionDashboardState extends State<ProductionDashboard> {
         _currentMachine = updatedMachine;
 
       });
+      loadEmail();
     });
 
     _mqttService.SubscribeMsg();
@@ -49,6 +51,14 @@ class _ProductionDashboardState extends State<ProductionDashboard> {
   void dispose() {
     _mqttService.disconnect();
     super.dispose();
+  }
+  Future<void> loadEmail() async {
+    final email = await SharedPrefService.getEmail();
+    if (email != null && email.isNotEmpty) {
+      setState(() {
+        userEmail = email;
+      });
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -59,6 +69,13 @@ class _ProductionDashboardState extends State<ProductionDashboard> {
             : Text('Dashboard Production for ${_currentMachine!.topic}'),
         centerTitle: true,
         backgroundColor: Colors.blue[900],
+        actions:[
+          if (userEmail != null && userEmail!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: NotificationIcon(userEmail: userEmail!),
+            ),
+        ],
       ),
       drawer: SideBar(),
       body: _currentMachine == null

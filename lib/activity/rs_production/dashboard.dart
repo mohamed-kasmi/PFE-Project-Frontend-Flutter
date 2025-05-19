@@ -8,11 +8,14 @@ import '../../widget/provider/production_function/granularitydropdownwidget.dart
 import '../../models/machinedata.dart';
 import '../../api/apimachinedata.dart';
 import '../../widget/side_bar.dart';
+import '../../service/SharedPreferences/shared_pref_service.dart';
+import '../../widget/notifications.dart';
 class DashboardPage extends StatefulWidget {
   @override
   _DashboardPageState createState() => _DashboardPageState();
 }
 class _DashboardPageState extends State<DashboardPage> {
+  String? userEmail;
   DateTime? startDate;
   DateTime? endDate;
   String? selectedMachine;
@@ -24,6 +27,15 @@ class _DashboardPageState extends State<DashboardPage> {
   void initState() {
     super.initState();
     _fetchMachineNames();
+    loadEmail();
+  }
+  Future<void> loadEmail() async {
+    final email = await SharedPrefService.getEmail();
+    if (email != null && email.isNotEmpty) {
+      setState(() {
+        userEmail = email;
+      });
+    }
   }
   void _selectDate(DateTime? date, bool isStartDate) {
     setState(() {
@@ -85,6 +97,13 @@ class _DashboardPageState extends State<DashboardPage> {
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
+        actions:[
+          if (userEmail != null && userEmail!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: NotificationIcon(userEmail: userEmail!),
+            ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),

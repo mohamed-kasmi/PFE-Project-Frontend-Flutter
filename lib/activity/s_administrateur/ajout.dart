@@ -3,6 +3,8 @@ import '../../widget/TextFieldWidget.dart';
 import '../../widget/ButtonWidget.dart';
 import '../../widget/side_bar.dart';
 import '../../api/apiuser.dart';
+import '../../service/SharedPreferences/shared_pref_service.dart';
+import '../../widget/notifications.dart';
 
 class AjoutPage extends StatefulWidget {
   @override
@@ -12,6 +14,21 @@ class AjoutPage extends StatefulWidget {
 class _AjoutPageState extends State<AjoutPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController matriculeController = TextEditingController();
+  String? userEmail;
+
+  @override
+  void initState() {
+    super.initState();
+    loadEmail();
+  }
+  Future<void> loadEmail() async {
+    final email = await SharedPrefService.getEmail();
+    if (email != null && email.isNotEmpty) {
+      setState(() {
+        userEmail = email;
+      });
+    }
+  }
 
   // Internal role mapping
   final Map<String, String> roles = {
@@ -77,6 +94,13 @@ class _AjoutPageState extends State<AjoutPage> {
             );
           },
         ),
+        actions:[
+          if (userEmail != null && userEmail!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: NotificationIcon(userEmail: userEmail!),
+            ),
+        ],
       ),
       body: Stack(
         fit: StackFit.expand,
