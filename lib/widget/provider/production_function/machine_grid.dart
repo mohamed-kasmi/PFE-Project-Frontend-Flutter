@@ -37,7 +37,8 @@ class MachineGrid extends StatelessWidget {
                   total: 0,
                   oee: 0.0,
                   cycleTime: 0.0,
-                  status: 'offline'
+                  status: 'offline',
+                  stop: false,
                 ),
               );
 

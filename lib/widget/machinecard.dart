@@ -22,7 +22,10 @@ class MachineCard extends StatelessWidget {
     if (machine.bon > 0 && machine.qtPlanifier > 0) {
       if (machine.bon == machine.qtPlanifier) {
         progressStatus = "Done";
-      } else {
+      }else if(machine.bon >= machine.qtPlanifier){
+        progressStatus = "Overload";
+      }
+      else {
         progressStatus = "Running";
       }
     }
@@ -90,9 +93,30 @@ class MachineCard extends StatelessWidget {
                               ),
                             ),
                           ),
-
-
-
+                        ]else if(machine.stop)...[
+                          Center(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 20),
+                              child: RichText(
+                                text: TextSpan(
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: 'Status: ',
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                    TextSpan(
+                                      text: 'Machine Stoped by leader',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                         ] else ...[
                           CircularPercentIndicator(
                             radius: circleRadius,
@@ -129,6 +153,8 @@ class MachineCard extends StatelessWidget {
                                         ? Colors.green
                                         : progressStatus == "Running"
                                         ? Colors.blue
+                                        : progressStatus == "Overload"
+                                        ? Colors.green
                                         : Colors.red,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 12,
@@ -138,11 +164,26 @@ class MachineCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          Text(
-                            machine.status ?? 'null',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
+                          RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: 'Status: ',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: machine.status ?? 'null',
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ]

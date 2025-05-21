@@ -28,29 +28,69 @@ class DateSelectorWidget extends StatelessWidget {
       onTap: () => _selectDate(context, isStartDate),
       child: InputDecorator(
         decoration: InputDecoration(
-          labelText: isStartDate ? 'Start Date' : 'End Date',
-          prefixIcon: Icon(Icons.calendar_today),
-          border: OutlineInputBorder(),
+          prefixIcon: Icon(Icons.calendar_today, color: Colors.blue[900]),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.blue[900]!, width: 2),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.blue[700]!, width: 3),
+          ),
           filled: true,
-          fillColor: Colors.grey.shade100,
+          fillColor: Colors.blue[50],
+          contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
         ),
         child: Text(
           isStartDate
-              ? (startDate?.toString().substring(0, 10) ?? 'Select Date')
-              : (endDate?.toString().substring(0, 10) ?? 'Select Date'),
-          style: TextStyle(fontSize: 16),
+              ? (startDate != null ? _formatDate(startDate!) : 'Start Date')
+              : (endDate != null ? _formatDate(endDate!) : 'End Date'),
+          style: TextStyle(
+            fontSize: 16,
+            color: (isStartDate ? startDate : endDate) != null
+                ? (isStartDate ? Colors.blue[900] : Colors.blue[700])
+                : Colors.grey[600],
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );
   }
 
+
+  String _formatDate(DateTime date) {
+    // Format as YYYY-MM-DD for clarity
+    return "${date.year.toString()}-${_twoDigits(date.month)}-${_twoDigits(date.day)}";
+  }
+
+  String _twoDigits(int n) => n.toString().padLeft(2, '0');
+
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: isStartDate ? (startDate ?? DateTime.now()) : (endDate ?? DateTime.now()),
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colors.blue[900]!, // header background color
+              onPrimary: Colors.white,    // header text color
+              onSurface: Colors.blue[900]!, // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blue[900], // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
-    onDateSelected(picked, isStartDate);
+    if (picked != null) {
+      onDateSelected(picked, isStartDate);
+    }
   }
 }

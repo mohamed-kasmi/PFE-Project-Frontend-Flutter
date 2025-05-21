@@ -82,19 +82,18 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[900],
-      appBar: AppBar(backgroundColor: Colors.blue[900]),
+      extendBodyBehindAppBar: true, // Allows body content to go under AppBar
+      appBar: AppBar(
+        backgroundColor: Colors.transparent, // Transparent AppBar
+        elevation: 0,
+      ),
       body: Stack(
         fit: StackFit.expand,
         children: [
           // Background image
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/background.jpg"),
-                fit: BoxFit.cover, // Cover the screen with the image
-              ),
-            ),
+          Image.asset(
+            "assets/background.jpg",
+            fit: BoxFit.cover,
           ),
           // Main content with semi-transparent background
           Center(
@@ -103,8 +102,8 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
               height: 600,
               padding: EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.8), // Semi-transparent background
-                borderRadius: BorderRadius.circular(10), // Rounded corners
+                color: Colors.white.withOpacity(0.8),
+                borderRadius: BorderRadius.circular(10),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black26,
@@ -123,9 +122,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Image.asset(
-                            'assets/bulgin.png', // Custom logo
-                            height: 110, // Logo height
-                            width: 150,  // Logo width
+                            'assets/bulgin.png',
+                            height: 110,
+                            width: 150,
                           ),
                         ],
                       ),
@@ -139,12 +138,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         ),
                       ),
                       SizedBox(height: 40),
-                      // New Password TextField with visibility toggle
                       TextFieldWidget(
                         labelText: "New Password",
                         controller: _newPasswordController,
                         icon: Icons.lock,
-                        obscureText: !_isNewPasswordVisible, // Toggle visibility
+                        obscureText: !_isNewPasswordVisible,
                         iconColor: Colors.blue[900]!,
                         textColor: Colors.blue[900]!,
                         suffixIcon: IconButton(
@@ -162,12 +160,11 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         ),
                       ),
                       SizedBox(height: 20),
-                      // Confirm Password TextField with visibility toggle
                       TextFieldWidget(
                         labelText: "Confirm Password",
                         controller: _confirmPasswordController,
                         icon: Icons.lock_outline,
-                        obscureText: !_isConfirmPasswordVisible, // Toggle visibility
+                        obscureText: !_isConfirmPasswordVisible,
                         iconColor: Colors.blue[900]!,
                         textColor: Colors.blue[900]!,
                         suffixIcon: IconButton(
@@ -185,7 +182,6 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         ),
                       ),
                       SizedBox(height: 40),
-                      // Reset Password Button
                       ButtonWidget(
                         text: "Reset Password",
                         onPressed: _submitForm,
@@ -200,4 +196,5 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
       ),
     );
   }
+
 }

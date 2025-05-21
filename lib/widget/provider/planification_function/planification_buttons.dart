@@ -32,11 +32,10 @@ class PlanificationButtons extends StatelessWidget {
   Widget _styledButton(IconData icon, String label, VoidCallback onPressed, Color color) {
     return ElevatedButton.icon(
       onPressed: onPressed,
-      icon: Icon(icon, size: 20),
-      label: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+      icon: Icon(icon, size: 20, color: Colors.white), // <-- Set icon color to white
+      label: Text(label, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
-        foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         elevation: 6,
@@ -44,4 +43,5 @@ class PlanificationButtons extends StatelessWidget {
       ),
     );
   }
+
 }

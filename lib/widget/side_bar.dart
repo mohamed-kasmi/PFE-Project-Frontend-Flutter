@@ -100,7 +100,7 @@ class _SideBarState extends State<SideBar> {
       ),
       ListTile(
         leading: Icon(Icons.next_plan),
-        title: Text('Planification'),
+        title: Text('Planning'),
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => PlanificationPage())),
       ),
       Divider(),

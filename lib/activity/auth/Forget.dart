@@ -36,10 +36,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[900],
+      extendBodyBehindAppBar: true, // Allows the body to extend behind the AppBar
       drawer: SideBar(),
       appBar: AppBar(
-        backgroundColor: Colors.blue[900],
+        backgroundColor: Colors.transparent, // Transparent for background image
         elevation: 0,
         leading: Builder(
           builder: (context) {
@@ -55,8 +55,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Container(
-            color: Colors.blue[900],
+          Image.asset(
+            'assets/background.jpg',
+            fit: BoxFit.cover,
           ),
           Center(
             child: Container(
@@ -114,4 +115,5 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       ),
     );
   }
+
 }

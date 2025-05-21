@@ -11,7 +11,19 @@ class ProductionTableWidget extends StatelessWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+        decoration: BoxDecoration(
+          color: Colors.white, // <-- Set white background
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(12), // optional: for rounded corners
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 6,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        padding: EdgeInsets.all(8), // optional: spacing inside the container
         child: Column(
           children: [
             _buildTableHeader(),
@@ -21,6 +33,7 @@ class ProductionTableWidget extends StatelessWidget {
       ),
     );
   }
+
 
   Widget _buildTableHeader() {
     return Container(

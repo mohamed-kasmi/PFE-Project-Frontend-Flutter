@@ -3,6 +3,8 @@ import '../../widget/TextFieldWidget.dart';
 import '../../widget/ButtonWidget.dart';
 import '../../widget/side_bar.dart';
 import '../../api/apiuser.dart';
+import '../../service/SharedPreferences/shared_pref_service.dart';
+import '../../widget/notifications.dart';
 
 class AjoutPage extends StatefulWidget {
   @override
@@ -12,17 +14,32 @@ class AjoutPage extends StatefulWidget {
 class _AjoutPageState extends State<AjoutPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController matriculeController = TextEditingController();
+  String? userEmail;
+
+  @override
+  void initState() {
+    super.initState();
+    loadEmail();
+  }
+  Future<void> loadEmail() async {
+    final email = await SharedPrefService.getEmail();
+    if (email != null && email.isNotEmpty) {
+      setState(() {
+        userEmail = email;
+      });
+    }
+  }
 
   // Internal role mapping
   final Map<String, String> roles = {
-    "Responseble Planification": "planification",
-    "Responseble Production": "production",
+    "Responsible Planning": "planification",
+    "Responsible Production": "production",
   };
 
   // Separate checkbox state map
   final Map<String, bool> roleChecks = {
-    "Responseble Planification": false,
-    "Responseble Production": false,
+    "Responsible Planning": false,
+    "Responsible Production": false,
   };
 
   void handleSubmit() async {
@@ -64,8 +81,13 @@ class _AjoutPageState extends State<AjoutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: SideBar(),
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.blue[900],
+        backgroundColor: Colors.transparent,
+        title: Text(
+          "Add Users",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22),
+        ),
         elevation: 0,
         leading: Builder(
           builder: (context) {
@@ -77,6 +99,13 @@ class _AjoutPageState extends State<AjoutPage> {
             );
           },
         ),
+        actions:[
+          if (userEmail != null && userEmail!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: NotificationIcon(userEmail: userEmail!),
+            ),
+        ],
       ),
       body: Stack(
         fit: StackFit.expand,
@@ -116,7 +145,7 @@ class _AjoutPageState extends State<AjoutPage> {
                   ),
                   SizedBox(height: 20),
                   TextFieldWidget(
-                    labelText: "Matricule",
+                    labelText: "Employee number",
                     controller: matriculeController,
                     icon: Icons.badge,
                     iconColor: Colors.blue[900]!,
@@ -160,7 +189,7 @@ class _AjoutPageState extends State<AjoutPage> {
                         ),
                       ),
                       child: Text(
-                        "Ajouter Responsable",
+                        "Add Responsible",
                         style: TextStyle(fontSize: 14, color: Colors.white),
                       ),
                     ),

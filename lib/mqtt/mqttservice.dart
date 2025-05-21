@@ -19,7 +19,7 @@ class MqttService {
   MqttService() {
 
 
-    const broker = '192.168.1.16';
+    const broker = '192.168.82.128';
     const port = 9001;
     final clientId = 'Client_${DateTime.now().millisecondsSinceEpoch}';
 
@@ -120,11 +120,11 @@ class MqttService {
 
 
 
-  Future<void> publishMsg(String topic, dynamic payload) async {
+  Future<void> publishMsg(String topic, dynamic payload, bool retain) async {
     if (!_isConnected) await connect();
     final builder = MqttClientPayloadBuilder();
     builder.addUTF8String(jsonEncode(payload));
-    _client.publishMessage(topic, MqttQos.atLeastOnce, builder.payload!, retain: true);
+    _client.publishMessage(topic, MqttQos.atLeastOnce, builder.payload!, retain: retain);
     print('Message published to $topic: $payload');
   }
 
