@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   String? userEmail;
 
   final List<String> _machineTopics = [
-    'misk01', 'misk02', 'misk03', 'misk04',
+    'misk01', 'misk02', 'bilher03', 'misk04',
     'misk05', 'misk06', 'misk07', 'misk08',
     'misk09','misk10',
   ];
@@ -110,7 +110,6 @@ class _HomePageState extends State<HomePage> {
                         stop: false,
                       ),
                     );
-
                     return SizedBox(
                       width:
                       (screenWidth - (cardsPerRow - 1) * 12) / cardsPerRow,
