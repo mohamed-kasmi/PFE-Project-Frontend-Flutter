@@ -49,19 +49,22 @@ class _StopPageState extends State<StopPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[900],
+      extendBodyBehindAppBar: true, // Extends the body behind the AppBar
       drawer: SideBar(),
       appBar: AppBar(
-        title: Text("Stop", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.blue[900],
+        backgroundColor: Colors.transparent, // Transparent AppBar
         elevation: 0,
+        title: const Text(
+          "Stop",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22),
+        ),
         leading: Builder(
           builder: (context) => IconButton(
-            icon: Icon(Icons.menu, color: Colors.white),
+            icon: const Icon(Icons.menu, color: Colors.white),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
-        actions:[
+        actions: [
           if (userEmail != null && userEmail!.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
@@ -69,7 +72,26 @@ class _StopPageState extends State<StopPage> {
             ),
         ],
       ),
-      body: MachineGrid(machineTopics: _machineTopics, machines: _machines),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/background.jpg',
+            fit: BoxFit.cover,
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: MachineGrid(
+                machineTopics: _machineTopics,
+                machines: _machines,
+              ),
+            ),
+          ),
+        ],
+      ),
+
     );
   }
+
 }

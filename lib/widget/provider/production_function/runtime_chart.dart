@@ -31,8 +31,21 @@ class RuntimeChartWidget extends StatelessWidget {
                 controller: _scrollController,
                 child: Container(
                   width: chartWidth,
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white, // <-- white background
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 6,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
                   child: _buildRuntimeChart(maxY),
                 ),
+
               ),
             ),
           ),

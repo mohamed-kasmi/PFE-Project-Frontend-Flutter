@@ -10,7 +10,7 @@ class PlanificationApi {
 
       Future<http.Response> makeRequest(String token) {
         return http.post(
-          Uri.parse('http://127.0.0.1:8000/machineplanification/mplanification/'),
+          Uri.parse('http://10.0.2.2:8000/machineplanification/mplanification/'),
           headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer $token',

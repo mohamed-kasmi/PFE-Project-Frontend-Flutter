@@ -235,17 +235,22 @@ class _PlanificationPageState extends State<PlanificationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[900],
-      drawer: SideBar(),
       extendBodyBehindAppBar: true,
+      drawer: SideBar(),
       appBar: AppBar(
-        backgroundColor: Colors.blue[900],
+        centerTitle: false,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
-          'Planification',
+          'Planning',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22),
         ),
-        centerTitle: true,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu, color: Colors.white),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+        ),
         actions:[
           if (userEmail != null && userEmail!.isNotEmpty)
             Padding(

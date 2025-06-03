@@ -32,14 +32,14 @@ class _AjoutPageState extends State<AjoutPage> {
 
   // Internal role mapping
   final Map<String, String> roles = {
-    "Responseble Planification": "planification",
-    "Responseble Production": "production",
+    "Responsible Planning": "planification",
+    "Responsible Production": "production",
   };
 
   // Separate checkbox state map
   final Map<String, bool> roleChecks = {
-    "Responseble Planification": false,
-    "Responseble Production": false,
+    "Responsible Planning": false,
+    "Responsible Production": false,
   };
 
   void handleSubmit() async {
@@ -81,8 +81,13 @@ class _AjoutPageState extends State<AjoutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: SideBar(),
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.blue[900],
+        backgroundColor: Colors.transparent,
+        title: Text(
+          "Add Users",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22),
+        ),
         elevation: 0,
         leading: Builder(
           builder: (context) {
@@ -140,7 +145,7 @@ class _AjoutPageState extends State<AjoutPage> {
                   ),
                   SizedBox(height: 20),
                   TextFieldWidget(
-                    labelText: "Matricule",
+                    labelText: "Employee number",
                     controller: matriculeController,
                     icon: Icons.badge,
                     iconColor: Colors.blue[900]!,
@@ -184,7 +189,7 @@ class _AjoutPageState extends State<AjoutPage> {
                         ),
                       ),
                       child: Text(
-                        "Ajouter Responsable",
+                        "Add Responsible",
                         style: TextStyle(fontSize: 14, color: Colors.white),
                       ),
                     ),

@@ -94,19 +94,20 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[900],
-      appBar: AppBar(backgroundColor: Colors.blue[900]),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/background.jpg"),
-                fit: BoxFit.cover,
-              ),
-            ),
+          // Background image
+          Image.asset(
+            "assets/background.jpg",
+            fit: BoxFit.cover,
           ),
+          // Main content container
           Center(
             child: Container(
               width: 500,
@@ -138,7 +139,7 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
                   ),
                   SizedBox(height: 20),
                   Text(
-                    "Entrez le code de vérification",
+                    "Enter the verification code",
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.blue[900],
@@ -152,7 +153,7 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
                     maxLength: 6,
                     style: TextStyle(color: Colors.blue[900]),
                     decoration: InputDecoration(
-                      labelText: "Code",
+                      labelText: "Verification Code",
                       labelStyle: TextStyle(color: Colors.blue[900]),
                       counterText: "",
                       prefixIcon: Icon(Icons.numbers, color: Colors.blue[900]),
@@ -161,14 +162,13 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
                           : null,
                       border: OutlineInputBorder(),
                       focusedBorder: OutlineInputBorder(
-                        borderSide:
-                        BorderSide(color: Colors.blue[900]!, width: 2),
+                        borderSide: BorderSide(color: Colors.blue[900]!, width: 2),
                       ),
                     ),
                   ),
                   SizedBox(height: 20),
                   Text(
-                    "Temps restant : ${_formatTime(_remainingSeconds)}",
+                    "Time remaining: ${_formatTime(_remainingSeconds)}",
                     style: TextStyle(
                       color: Colors.red[700],
                       fontWeight: FontWeight.bold,
@@ -176,7 +176,7 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
                   ),
                   SizedBox(height: 30),
                   ButtonWidget(
-                    text: "Valider le code",
+                    text: "Validate Code",
                     onPressed: _submitCode,
                     height: 50,
                     width: double.infinity,

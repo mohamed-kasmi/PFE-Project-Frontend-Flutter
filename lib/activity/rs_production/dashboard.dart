@@ -81,23 +81,29 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     final maxQuantity = machineDataList.isNotEmpty
-        ? machineDataList.map((e) => e.goodQtyDay + 10000).reduce((a, b) => a > b ? a : b).toDouble() : 0.0;
+        ? machineDataList.map((e) => e.goodQtyDay + 10000).reduce((a, b) => a > b ? a : b).toDouble()
+        : 0.0;
     final maxRuntime = machineDataList.isNotEmpty
-        ? machineDataList.map((e) => e.runHoursDay + e.downHoursDay).reduce((a, b) => a > b ? a : b) : 0.0;
+        ? machineDataList.map((e) => e.runHoursDay + e.downHoursDay).reduce((a, b) => a > b ? a : b)
+        : 0.0;
+
     return Scaffold(
       drawer: SideBar(),
+      extendBodyBehindAppBar: true, // Make background extend behind AppBar
       appBar: AppBar(
-        title: Text("Production Dashboard",
-          style: TextStyle(color: Colors.white, fontSize: 22)),
-        backgroundColor: Colors.blue[900],
+        backgroundColor: Colors.transparent, // Transparent so image shows behind
         elevation: 0,
+        title: Text(
+          "Production Dashboard",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22),
+        ),
         leading: Builder(
           builder: (context) => IconButton(
             icon: Icon(Icons.menu, color: Colors.white),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
         ),
-        actions:[
+        actions: [
           if (userEmail != null && userEmail!.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
@@ -105,49 +111,61 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            LayoutBuilder(
-              builder: (context, constraints) {
-                bool isMobile = constraints.maxWidth < 600;
-                return isMobile
-                    ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        DateSelectorWidget(
-                          startDate: startDate,
-                          endDate: endDate,
-                          onDateSelected: (date, isStartDate) => _selectDate(date, isStartDate),
-                        ),
-                        SizedBox(height: 10),
-                        MachineDropdownWidget(
-                          machineList: machineList,
-                          selectedMachine: selectedMachine,
-                          onChanged: (value) => setState(() => selectedMachine = value),
-                        ),
-                        SizedBox(height: 10),
-                        GranularityDropdownWidget(
-                          granularityOptions: granularityList,
-                          selectedGranularity: selectedGranularity,
-                          onChanged: (value) => setState(() => selectedGranularity = value),
-                        ),
-                        SizedBox(height: 10),
-                        ElevatedButton(
-                          onPressed: _fetchMachineData,
-                          child: Text("Submit"),
-                        ),
-                      ],
-                    )
-                    : Row(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Background image
+          Image.asset(
+            'assets/background.jpg',
+            fit: BoxFit.cover,
+          ),
+
+          // Foreground content with SafeArea
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      bool isMobile = constraints.maxWidth < 600;
+                      return isMobile
+                          ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          DateSelectorWidget(
+                            startDate: startDate,
+                            endDate: endDate,
+                            onDateSelected: (date, isStartDate) => _selectDate(date, isStartDate),
+                          ),
+                          SizedBox(height: 10),
+                          MachineDropdownWidget(
+                            machineList: machineList,
+                            selectedMachine: selectedMachine,
+                            onChanged: (value) => setState(() => selectedMachine = value),
+                          ),
+                          SizedBox(height: 10),
+                          GranularityDropdownWidget(
+                            granularityOptions: granularityList,
+                            selectedGranularity: selectedGranularity,
+                            onChanged: (value) => setState(() => selectedGranularity = value),
+                          ),
+                          SizedBox(height: 10),
+                          ElevatedButton(
+                            onPressed: _fetchMachineData,
+                            child: Text("Submit"),
+                          ),
+                        ],
+                      )
+                          : Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
                             child: DateSelectorWidget(
                               startDate: startDate,
                               endDate: endDate,
-                              onDateSelected: (date, isStartDate) => _selectDate(date, isStartDate),
+                              onDateSelected: (date, isStartDate) =>
+                                  _selectDate(date, isStartDate),
                             ),
                           ),
                           SizedBox(width: 10),
@@ -170,16 +188,34 @@ class _DashboardPageState extends State<DashboardPage> {
                           Expanded(
                             child: ElevatedButton(
                               onPressed: _fetchMachineData,
-                              child: Text("Submit"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,  // Strong blue background
+                                foregroundColor: Colors.blue[900],       // White text
+                                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                elevation: 5,
+                                shadowColor: Colors.blueAccent.withOpacity(0.4),
+                              ),
+                              child: Text(
+                                "Submit",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.2,
+                                ),
+                              ),
                             ),
+
                           ),
                         ],
                       );
-              },
-            ),
-            machineDataList.isNotEmpty
-                ? Column(
-                  children: [
+                    },
+                  ),
+                  machineDataList.isNotEmpty
+                      ? Column(
+                    children: [
                       SizedBox(height: 30),
                       CombinedChartWidget(data: machineDataList, maxY: maxQuantity),
                       SizedBox(height: 30),
@@ -187,19 +223,26 @@ class _DashboardPageState extends State<DashboardPage> {
                       SizedBox(height: 30),
                       ProductionTableWidget(data: machineDataList),
                     ],
-                )
-                : Padding(
-                  padding: const EdgeInsets.only(top: 30.0),
-                  child: Center(
-                    child: Text(
-                      "Submit your search.",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  )
+                      : Padding(
+                    padding: const EdgeInsets.only(top: 30.0),
+                    child: Center(
+                      child: Text(
+                        "Submit your search.",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white), // white for visibility
+                      ),
                     ),
                   ),
-                ),
-          ],
-        ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+
 }

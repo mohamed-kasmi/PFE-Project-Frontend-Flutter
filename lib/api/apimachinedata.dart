@@ -4,7 +4,7 @@ import '../models/machinedata.dart';
 import '../service/SharedPreferences/shared_pref_service.dart';
 
 class Apimachinedata{
-  static const String baseurl='http://127.0.0.1:8000/machinedata';
+  static const String baseurl='http://10.0.2.2:8000/machinedata';
 
   static Future<List<MachineData>> getMachineByGranularity(
       String startDate, String endDate, String name, String granularity) async {

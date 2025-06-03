@@ -3,7 +3,7 @@ import 'dart:convert';
 import '../models/machinestop.dart';
 
 class Apimachinedata{
-  static const String baseurl='http://127.0.0.1:8000/machinestop';
+  static const String baseurl='http://10.0.2.2:8000/machinestop';
   static Future<List<MachineStop>> getmachines() async {
     try {
       final response = await http.get(Uri.parse('$baseurl/machines/'));

@@ -2,7 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 class SharedPrefService {
-  static const String baseurl='http://127.0.0.1:8000/auth';
+  static const String baseurl='http://10.0.2.2:8000/auth';
   static Future<String?> getEmail() async {
     final prefs = await SharedPreferences.getInstance();
     final email = prefs.getString('email');

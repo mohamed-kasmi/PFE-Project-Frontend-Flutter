@@ -3,6 +3,7 @@ import 'package:pdcs_frontend/activity/home.dart';
 import 'activity/auth/Login.dart';
 import 'activity/auth/verification_code.dart';
 import 'activity/auth/reset.dart';
+import 'activity/auth/Forget.dart';
 import 'activity/auth/setpassword.dart';
 import 'activity/s_administrateur/users.dart';
 import 'activity/s_administrateur/ajout.dart';

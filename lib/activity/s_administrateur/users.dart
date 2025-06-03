@@ -79,12 +79,14 @@ class _UsersPageState extends State<UsersPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: SideBar(),
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         title: Text(
           "Users",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22),
         ),
-        backgroundColor: Colors.blue[900],
+        elevation: 0,
         iconTheme: IconThemeData(color: Colors.white),
         actions:[
           if (userEmail != null && userEmail!.isNotEmpty)
@@ -147,7 +149,7 @@ class _UsersPageState extends State<UsersPage> {
                               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                             ),
                             subtitle: Text(
-                              "Matricule: ${user.matricule}\nRole: ${user.role}",
+                              "Employee number: ${user.matricule}\nRole: ${user.role}",
                               style: TextStyle(color: Colors.white70),
                             ),
                             trailing: IconButton(

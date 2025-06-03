@@ -18,7 +18,8 @@ class _HomePageState extends State<HomePage> {
   String? userEmail;
 
   final List<String> _machineTopics = [
-    'misk01', 'misk02', 'bilher03', 'misk04',
+
+    'misk01', 'misk02', 'Bilher 03', 'misk04',
     'misk05', 'misk06', 'misk07', 'misk08',
     'misk09','misk10',
   ];
@@ -65,7 +66,7 @@ class _HomePageState extends State<HomePage> {
           backgroundColor: Colors.transparent, // Important to show background
           drawer: SideBar(),
           appBar: AppBar(
-            title: const Text("Home", style: TextStyle(color: Colors.white)),
+            title: const Text("Home", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22),),
             backgroundColor: Colors.transparent,
             elevation: 0,
             leading: Builder(

@@ -66,7 +66,7 @@ class _ProductionDashboardState extends State<ProductionDashboard> {
       appBar: AppBar(
         title: _currentMachine == null
             ? const Text('Loading...')
-            : Text('Dashboard Production for ${_currentMachine!.topic}'),
+            : Text('Dashboard Production for ${_currentMachine!.topic}' ,style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22),),
         centerTitle: true,
         backgroundColor: Colors.blue[900],
         actions:[

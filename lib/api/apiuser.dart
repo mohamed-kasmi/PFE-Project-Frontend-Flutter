@@ -4,7 +4,7 @@ import '../models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../service/SharedPreferences/shared_pref_service.dart';
 class Apiuser {
-  static const String baseurl='http://127.0.0.1:8000/auth';
+  static const String baseurl='http://10.0.2.2:8000/auth';
   static Future<Map<String, dynamic>> auth(String email, String password) async{
     try{
       final response = await http.post(Uri.parse('$baseurl/login/'),
